@@ -20,6 +20,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import mx.odelant.printorders.R
 import mx.odelant.printorders.activity.Login.RegistUserActivity
+import mx.odelant.printorders.dataLayer.AppDatabase
 import java.nio.charset.Charset
 import java.security.Key
 import javax.crypto.Cipher
@@ -51,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         val rProfilePictureImageView = profile_picture_iv
         val rChangePass = changePass_card_view
         val rLogOutBtn = logOut_card_view
+        val rReStarBtn = btn_restar_db
 
         if(systemUser == false){
             rAnalyticsCardView.visibility  = View.GONE
@@ -83,6 +85,17 @@ class MainActivity : AppCompatActivity() {
         rLogOutBtn.setOnClickListener { LogOutSessión() }
 
         rChangePass.setOnClickListener { ChangePassword() }
+
+        val db = AppDatabase.getInstance(applicationContext)
+
+        rReStarBtn.setOnClickListener {
+            MainDialog.makeReStarDialog(
+                this,
+                db,
+                sharedPref
+            ) {
+            }
+        }
 
     }
 

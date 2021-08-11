@@ -37,15 +37,12 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
         fun getInstance(context: Context): AppDatabase {
 //            context.deleteDatabase("appdb")
-
-
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(context, AppDatabase::class.java, "appdb")
                     .addMigrations(MIGRATION_2_3)
-                    .allowMainThreadQueries()
+//                    .allowMainThreadQueries()
                     .build()
             }
-
             return INSTANCE as AppDatabase
         }
     }

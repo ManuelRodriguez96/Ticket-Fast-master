@@ -14,7 +14,7 @@
             android:theme="@style/AppTheme">
 
         <activity android:name=".activity.start.StartActivity"
-                  android:screenOrientation="portrait"
+                  android:screenOrientation="sensor"
                   android:label="@string/app_name"
                   android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -27,32 +27,32 @@
         <activity
                 android:name=".activity.main.MainActivity"
                 android:label="@string/app_name"
-                android:screenOrientation="portrait"
+                android:screenOrientation="sensor"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".activity.createOrder.CreateOrderActivity"
-                  android:screenOrientation="portrait"
+                  android:screenOrientation="sensor"
                   android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.analytics.AnalyticsActivity"
-                  android:screenOrientation="portrait"
+                  android:screenOrientation="sensor"
                   android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.client.ClientActivity"
-                  android:screenOrientation="portrait"
+                  android:screenOrientation="sensor"
                   android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.client.ClientDetailActivity"
-                  android:screenOrientation="portrait"
+                  android:screenOrientation="sensor"
                   android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.inventory.InventoryActivity"
-                  android:screenOrientation="portrait"
+                  android:screenOrientation="sensor"
                   android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.orderHistory.OrderHistoryActivity"
-                  android:screenOrientation="portrait"
+                  android:screenOrientation="sensor"
                   android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.orderDetail.OrderDetailActivity"
-                  android:screenOrientation="portrait"
+                  android:screenOrientation="sensor"
                   android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.Login.RegistUserActivity"
-                  android:screenOrientation="portrait"
+                  android:screenOrientation="sensor"
                   android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

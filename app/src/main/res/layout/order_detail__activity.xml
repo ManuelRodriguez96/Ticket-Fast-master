@@ -47,13 +47,18 @@
                     android:text="@string/sin_conexion"
                     android:textSize="18sp"/>
         </LinearLayout>
-        <com.leerybit.escpos.widgets.TicketPreview
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/order_detail_ll_static_top"
+            app:layout_constraintBottom_toTopOf="@id/order_detail_btn_finalize">
+            <com.leerybit.escpos.widgets.TicketPreview
                 android:id="@+id/order_detail_ticket_preview"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintTop_toBottomOf="@id/order_detail_ll_static_top"
-                app:layout_constraintBottom_toTopOf="@id/order_detail_btn_finalize"
-        />
+                android:layout_height="match_parent" />
+        </androidx.core.widget.NestedScrollView>
+
         <Button android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_print_black_24dp"

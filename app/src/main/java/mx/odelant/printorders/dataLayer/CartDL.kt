@@ -28,6 +28,12 @@ class CartDL {
             }
         }
 
+        suspend fun deleteAll(db: AppDatabase) {
+            withContext(Dispatchers.IO) {
+                db.cartDao().deleteAllCart()
+            }
+        }
+
         suspend fun clearPendingCart(db: AppDatabase) {
             withContext(Dispatchers.IO) {
                 val cart = getOrCreatePendingCart(db)

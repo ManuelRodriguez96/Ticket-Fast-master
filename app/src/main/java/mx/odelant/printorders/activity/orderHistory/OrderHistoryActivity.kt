@@ -41,10 +41,11 @@ class  OrderHistoryActivity : AppCompatActivity() {
     private val ordersToPrint  = ArrayList<OrderToExcel>()
     private val mCalendarStart = initCalendarStart()
     private val mCalendarEnd = initCalendarEnd()
-    private val db: AppDatabase = AppDatabase.getInstance(this)
+    private var  db: AppDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        db = AppDatabase.getInstance(this)
         setContentView(rOrderHistoryActivity)
         setToolbar()
         bindAdapters()
@@ -181,7 +182,7 @@ class  OrderHistoryActivity : AppCompatActivity() {
 
             count++
 
-            var productLines = db.cartItemDao().getCartItems(item.folio)
+            var productLines = db!!.cartItemDao().getCartItems(item.folio)
 
             for (line in  productLines){
                 

@@ -11,11 +11,13 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = Product::class,
             parentColumns = ["product_id"],
-            childColumns = ["productId"]
+            childColumns = ["productId"],
+            onDelete = ForeignKey.CASCADE
         ), ForeignKey(
             entity = Client::class,
             parentColumns = ["id"],
-            childColumns = ["clientId"]
+            childColumns = ["clientId"],
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )

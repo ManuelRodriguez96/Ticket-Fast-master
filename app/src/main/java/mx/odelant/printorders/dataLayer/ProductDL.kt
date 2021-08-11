@@ -65,6 +65,12 @@ class ProductDL {
             }
         }
 
+        suspend fun deleteAll(db: AppDatabase) {
+            withContext(Dispatchers.IO) {
+                db.productDao().deleteAllProduct()
+            }
+        }
+
         suspend fun getProductById(db: AppDatabase, productId: Int): Product? {
             return withContext(Dispatchers.IO) {
                 db.productDao().getProduct(productId)

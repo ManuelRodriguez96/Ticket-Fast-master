@@ -66,22 +66,25 @@ class OrderDetailActivity : AppCompatActivity() {
             }
         }
         val db = AppDatabase.getInstance(this)
+
         GlobalScope.launch {
             val ticket = generateTicketAsync(db, mCartId, printer).await()
-
-            order_detail_ticket_preview.setTicket(ticket)
-
-            order_detail_btn_finalize.setOnClickListener {
-                try {
-                    printer.send(ticket)
-                } catch (e: IOException) {
-                    Snackbar.make(
-                        order_detail_main_view,
-                        "Hubo un problema imprimiendo.",
-                        Snackbar.LENGTH_LONG
-                    ).show()
+            runOnUiThread {
+                order_detail_ticket_preview.setTicket(ticket)
+                order_detail_btn_finalize.setOnClickListener {
+                    try {
+                        printer.send(ticket)
+                    } catch (e: IOException) {
+                        Snackbar.make(
+                            order_detail_main_view,
+                            "Hubo un problema imprimiendo.",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
+
+
         }
     }
 
@@ -127,7 +130,7 @@ class OrderDetailActivity : AppCompatActivity() {
             val sharedPref = getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE)
             val username = sharedPref.getString(getString(R.string.username), "")
 
-            if(!username.isNullOrBlank()) {
+            if (!username.isNullOrBlank()) {
                 ticketBuilder.header(username)
             }
 
@@ -135,20 +138,31 @@ class OrderDetailActivity : AppCompatActivity() {
             var day = date.get(Calendar.DAY_OF_MONTH)
             var mont = date.get(Calendar.MONTH)
             var year = date.get(Calendar.YEAR)
-            var client : CharSequence? = if  (TextUtils.isEmpty(clientAsync.await()?.name)) { "" } else { clientAsync.await()?.name}
-            var email = sharedPref.getString("EMAIL","")
+            var client: CharSequence? = if (TextUtils.isEmpty(clientAsync.await()?.name)) {
+                ""
+            } else {
+                clientAsync.await()?.name
+            }
+            var email = sharedPref.getString("EMAIL", "")
             var prefijClient = "00"
             if (!TextUtils.isEmpty(client))
-                prefijClient = client.toString().get(0) +""+ client.toString().get(1)
+                prefijClient = client.toString().get(0) + "" + client.toString().get(1)
 
-            val  folio = db.cartDao().getFolio(cartId)
+            val folio = db.cartDao().getFolio(cartId)
 
             ticketBuilder
-                .right("No folio : #" + prefijClient.toUpperCase()+"-"+ day + (mont+1)  + year + "- 0"+ folio )
+                .right("No folio : #" + prefijClient.toUpperCase() + "-" + day + (mont + 1) + year + "- 0" + folio)
                 .dividerDouble()
                 .header("Nota de expedicion")
                 .dividerDouble()
-                .text("Cliente: " + REGEX_UNACCENT.replace(Normalizer.normalize(client, Normalizer.Form.NFD), ""))
+                .text(
+                    "Cliente: " + REGEX_UNACCENT.replace(
+                        Normalizer.normalize(
+                            client,
+                            Normalizer.Form.NFD
+                        ), ""
+                    )
+                )
                 .text("Expedida: ${dateformat.format(cartAsync.await()!!.dateCreated)}")
                 .dividerDouble()
                 .feedLine()
@@ -157,13 +171,17 @@ class OrderDetailActivity : AppCompatActivity() {
             if (cartItems.isNotEmpty()) {
                 ticketBuilder.subHeader("Orden")
                 cartItems.map {
-                    val productNormalize = Normalizer.normalize(it.product.name, Normalizer.Form.NFD)
-                    val productName = REGEX_UNACCENT.replace(productNormalize,"")
+                    val productNormalize =
+                        Normalizer.normalize(it.product.name, Normalizer.Form.NFD)
+                    val productName = REGEX_UNACCENT.replace(productNormalize, "")
                     val productNameAndUnitPriceString =
-                        "${Formatter.intInHundredthsToString(it.cartItem.quantityInHundredths).padStart(
-                            5,
-                            ' '
-                        )} ${productName} ($${Formatter.intInHundredthsToString(it.cartItem.unitPriceInCents)})"
+                        "${
+                            Formatter.intInHundredthsToString(it.cartItem.quantityInHundredths)
+                                .padStart(
+                                    5,
+                                    ' '
+                                )
+                        } ${productName} ($${Formatter.intInHundredthsToString(it.cartItem.unitPriceInCents)})"
                     val productTotalString =
                         "$${Formatter.intInHundredthsToString((it.cartItem.unitPriceInCents * it.cartItem.quantityInHundredths + 50) / 100)}"
 
@@ -191,30 +209,42 @@ class OrderDetailActivity : AppCompatActivity() {
                     .subHeader("Devoluciones")
                 cartReturnItems.map {
                     ticketBuilder.text(
-                        "${Formatter.intInHundredthsToString(it.cartReturnItem.quantityInHundredths).padStart(
-                            5,
-                            ' '
-                        )} ${it.product.name}"
+                        "${
+                            Formatter.intInHundredthsToString(it.cartReturnItem.quantityInHundredths)
+                                .padStart(
+                                    5,
+                                    ' '
+                                )
+                        } ${it.product.name}"
                     )
                 }
             }
 
+            val total = (cartAsync.await()?.totalPriceInCents ?: 0).toString()
             ticketBuilder.feedLine()
                 .divider()
                 .feedLine()
                 .menuLine(
                     "Total:",
-                    "$${SpannableString((cartAsync.await()?.totalPriceInCents ?: 0).toString()).setSpan( StyleSpan(Typeface.BOLD), 0, 10, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)}"
+                    "$${
+                        /*SpannableString(*/total/*).setSpan(
+                            StyleSpan(Typeface.BOLD),
+                            0,
+                            total.length,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )*/
+                    }"
                 )
                 .divider()
                 .feedLine(2)
                 .build()
         }
     }
-/*Formatter.intInHundredthsToString(
-                        cartAsync.await()?.totalPriceInCents ?: 0
-                    )
-* */
+
+    /*Formatter.intInHundredthsToString(
+                            cartAsync.await()?.totalPriceInCents ?: 0
+                        )
+    * */
     private fun setupPrinter() {
         val onStateChange: (state: Int) -> Unit = { state ->
             when (state) {

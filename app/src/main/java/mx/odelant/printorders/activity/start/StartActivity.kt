@@ -33,7 +33,9 @@ class StartActivity : AppCompatActivity() {
 
         textEmail = findViewById(R.id.start_et_email)
 
-        if (startPresenter.checkRegistration()) {
+        continueTRegisterActivity()
+
+        /*if (startPresenter.checkRegistration()) {
             continueTRegisterActivity()
         } else {
             startView.registrationButton.setOnClickListener {
@@ -55,7 +57,7 @@ class StartActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-        }
+        }*/
     }
 
     private fun continueTRegisterActivity() {

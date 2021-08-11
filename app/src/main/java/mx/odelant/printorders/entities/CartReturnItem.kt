@@ -8,11 +8,13 @@ import androidx.room.*
         ForeignKey(
             entity = Cart::class,
             parentColumns = ["cart_id"],
-            childColumns = ["cartId"]
+            childColumns = ["cartId"],
+            onDelete = ForeignKey.CASCADE
         ), ForeignKey(
             entity = Product::class,
             parentColumns = ["product_id"],
-            childColumns = ["productId"]
+            childColumns = ["productId"],
+            onDelete = ForeignKey.CASCADE
         )]
 )
 data class CartReturnItem(

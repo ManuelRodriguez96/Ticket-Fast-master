@@ -15,6 +15,9 @@ interface CartDao {
     @Delete
     fun deleteCart(cart: Cart)
 
+    @Query("DELETE FROM cart")
+    fun deleteAllCart()
+
     @Query("SELECT * FROM Cart WHERE isPending = 1 ORDER BY cart_id DESC LIMIT 1")
     fun getPendingCart(): Cart?
 

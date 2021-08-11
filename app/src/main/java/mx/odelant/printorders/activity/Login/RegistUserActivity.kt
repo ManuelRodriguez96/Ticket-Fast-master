@@ -39,12 +39,11 @@ class RegistUserActivity : AppCompatActivity( ) {
         val textPass : TextView =  findViewById(R.id.tv_na_registPassword)
 
         val connectUser = sharedPref.getBoolean("connect", false)
-        val passwordGlobal : String
 
         if(connectUser)
             continueToMainActivity()
 
-        passwordGlobal =  sharedPref.getString("password", "")
+        val passwordGlobal : String = sharedPref.getString("password", "").toString()
 
         if (passwordGlobal.isNotEmpty()) {
             btnRegist.visibility = View.GONE

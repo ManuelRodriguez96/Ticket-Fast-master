@@ -66,6 +66,12 @@ class ClientDL {
             }
         }
 
+        suspend fun deleteAll(db: AppDatabase) {
+            withContext(Dispatchers.IO) {
+                db.clientDao().deleteAllClient()
+            }
+        }
+
         suspend fun getById(db: AppDatabase, clientId: Int): Client? {
             return withContext(Dispatchers.IO) {
                 db.clientDao().getClient(clientId)

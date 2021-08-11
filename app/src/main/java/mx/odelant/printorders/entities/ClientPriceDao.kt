@@ -13,6 +13,9 @@ interface ClientPriceDao {
     @Delete
     fun deleteClientPrice(clientPrice: ClientPrice)
 
+    @Query("DELETE FROM clientPrice")
+    fun deleteAllClientPrice()
+
     @Query(
         """
         SELECT cp.* FROM clientprice AS cp 

@@ -95,6 +95,10 @@ class CreateOrderDialog {
                 dialogLayout.findViewById<EditText>(R.id.create_order_et_quantity)
             val productPriceEditText =
                 dialogLayout.findViewById<EditText>(R.id.create_order_et_price)
+
+            val sharedPref = context.getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE)
+            if (!sharedPref.getBoolean("isSystemUser", true))
+                productPriceEditText.isEnabled = false
             val returnItemCheckbox =
                 dialogLayout.findViewById<CheckBox>(R.id.create_order_checkbox_is_return)
             val productPriceLinearLayout =

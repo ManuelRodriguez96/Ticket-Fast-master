@@ -51,5 +51,11 @@ class CartReturnItemDL {
                 db.cartReturnItemDao().deleteCartReturnItem(cartReturnItem)
             }
         }
+
+        suspend fun deleteAll(db: AppDatabase) {
+            withContext(Dispatchers.IO) {
+                db.cartReturnItemDao().deleteAllCartReturnItem()
+            }
+        }
     }
 }

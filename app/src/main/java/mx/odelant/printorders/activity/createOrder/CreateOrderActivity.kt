@@ -12,6 +12,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mx.odelant.printorders.R
+import mx.odelant.printorders.activity.client.ClientDetailDialog
 import mx.odelant.printorders.activity.orderDetail.OrderDetailActivity
 import mx.odelant.printorders.activity.utils.adapter.*
 import mx.odelant.printorders.dataLayer.AppDatabase
@@ -59,6 +60,14 @@ class CreateOrderActivity : AppCompatActivity() {
     }
 
     private fun setListeners() {
+
+        val rCreateClientButton = create_order_btn_create_client
+        rCreateClientButton.setOnClickListener {
+            val db = AppDatabase.getInstance(applicationContext)
+            ClientDetailDialog.makeCreateClientDialog(this, db) { /*selectedClient ->
+                updateSelectedClient(selectedClient)*/
+            }
+        }
 
         val rSelectClientButton = create_order_btn_select_client
         rSelectClientButton.setOnClickListener {
@@ -216,8 +225,8 @@ class CreateOrderActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val id = item?.itemId
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
         if (id == R.id.create_order_menu_btn_clear_cart) {
             CreateOrderDialog.makeConfirmClearCartDialog(this) {
                 clearAllCartItems()

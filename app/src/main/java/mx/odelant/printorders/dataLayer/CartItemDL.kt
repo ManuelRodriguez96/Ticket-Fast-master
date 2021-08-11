@@ -48,5 +48,11 @@ class CartItemDL {
                 db.cartItemDao().deleteCartItem(cartItem)
             }
         }
+
+        suspend fun deleteAll(db: AppDatabase) {
+            withContext(Dispatchers.IO) {
+                db.cartItemDao().deleteAllCartItem()
+            }
+        }
     }
 }

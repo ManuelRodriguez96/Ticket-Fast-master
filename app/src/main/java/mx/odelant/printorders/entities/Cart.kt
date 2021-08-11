@@ -10,7 +10,8 @@ import java.util.*
     foreignKeys = [ForeignKey(
         entity = Client::class,
         parentColumns = ["id"],
-        childColumns = ["clientId"]
+        childColumns = ["clientId"],
+        onDelete = ForeignKey.CASCADE
     )]
 )
 

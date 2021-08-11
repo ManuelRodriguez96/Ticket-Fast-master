@@ -13,6 +13,9 @@ interface CartItemDao {
     @Delete
     fun deleteCartItem(cartItem: CartItem)
 
+    @Query("DELETE FROM cartItem")
+    fun deleteAllCartItem()
+
     @Query("SELECT * FROM cartitem WHERE cartId = :cartId")
     fun getCartItems(cartId: Int): List<CartItem>
 

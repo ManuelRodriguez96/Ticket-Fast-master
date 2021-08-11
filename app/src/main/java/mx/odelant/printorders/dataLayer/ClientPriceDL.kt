@@ -81,6 +81,13 @@ class ClientPriceDL {
             }
         }
 
+
+        suspend fun deleteAll(db: AppDatabase) {
+            withContext(Dispatchers.IO) {
+                db.clientPriceDao().deleteAllClientPrice()
+            }
+        }
+
         suspend fun getByClientAndProduct(
             db: AppDatabase,
             client: Client,

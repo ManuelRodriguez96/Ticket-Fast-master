@@ -92,7 +92,7 @@ class InventoryActivity : AppCompatActivity() {
                         db,
                         product
                     ) { GlobalScope.launch { updateProductsList(gridAdapter) } }
-                }
+                }, null
             )
             row.hideField1 = true
             row

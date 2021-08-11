@@ -13,6 +13,9 @@ interface CartReturnItemDao {
     @Delete
     fun deleteCartReturnItem(cartReturnItem: CartReturnItem)
 
+    @Query("DELETE FROM cartReturnItem")
+    fun deleteAllCartReturnItem()
+
     @Query("SELECT * FROM cartreturnitem WHERE cartId = :cartId")
     fun getCartReturnItems(cartId: Int): List<CartReturnItem>
 

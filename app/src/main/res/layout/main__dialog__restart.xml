@@ -9,8 +9,8 @@
         android:id="@+id/main_dialog_edittext_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/nombre_del_negocio"
+        android:hint="Contraseña de administrador"
         android:importantForAutofill="no"
-        android:inputType="textCapWords"
+        android:inputType="textPassword"
         android:maxLength="28" />
 </LinearLayout>

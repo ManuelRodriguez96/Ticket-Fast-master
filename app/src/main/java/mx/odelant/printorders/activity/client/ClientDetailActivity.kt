@@ -161,7 +161,7 @@ class ClientDetailActivity : AppCompatActivity() {
                             clientPrice,
                             product
                         ) { GlobalScope.launch { updateClientPricesList(gridAdapter) } }
-                    }
+                    }, null
                 )
                 row.hideField1 = true
                 return row
