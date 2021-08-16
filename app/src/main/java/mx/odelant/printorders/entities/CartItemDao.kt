@@ -19,6 +19,9 @@ interface CartItemDao {
     @Query("SELECT * FROM cartitem WHERE cartId = :cartId")
     fun getCartItems(cartId: Int): List<CartItem>
 
+    @Query("SELECT * FROM cartitem")
+    fun getAll(): List<CartItem>
+
     @Query("SELECT * FROM cartitem WHERE productId = :productId AND cartId = :cartId")
     fun getCartItemByProductIdAndCartId(productId: Int, cartId: Int): CartItem?
 
