@@ -5,7 +5,7 @@ import androidx.room.*
 @Dao
 interface ClientDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertClient(client: Client)
+    fun insertClient(client: Client) : Long
 
     @Update
     fun updateClient(client: Client)
@@ -24,6 +24,9 @@ interface ClientDao {
 
     @Query("SELECT * FROM client where id = :clientId LIMIT 1")
     fun getClient(clientId: Int): Client?
+
+    @Query("SELECT * FROM client where name = :clientName LIMIT 1")
+    fun getClient(clientName: String): Client?
 
     @Query("SELECT COUNT(*) FROM client where name = :clientName")
     fun getClientCountByName(clientName: String): Int

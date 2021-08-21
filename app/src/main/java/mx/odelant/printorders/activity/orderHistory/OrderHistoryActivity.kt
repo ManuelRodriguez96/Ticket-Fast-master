@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -14,20 +15,19 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.borax12.materialdaterangepicker.date.DatePickerDialog
 import kotlinx.android.synthetic.main.order_history__activity.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import mx.odelant.printorders.R
 import mx.odelant.printorders.activity.orderDetail.OrderDetailActivity
 import mx.odelant.printorders.activity.utils.adapter.Grid3CellAdapter
 import mx.odelant.printorders.activity.utils.adapter.Grid3CellContent
+import mx.odelant.printorders.activity.utils.adapter.Grid3CellHeader
 import mx.odelant.printorders.activity.utils.adapter.Grid3CellRow
 import mx.odelant.printorders.dataLayer.AppDatabase
 import mx.odelant.printorders.dataLayer.CartDL
+import mx.odelant.printorders.dataLayer.CartItemDL
 import mx.odelant.printorders.entities.CartDao
+import mx.odelant.printorders.entities.CartItemDao
 import mx.odelant.printorders.entities.Client
-import mx.odelant.printorders.entities.OrderToExcel
 import mx.odelant.printorders.utils.Formatter
 import org.apache.poi.hssf.usermodel.HSSFCellStyle
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
@@ -49,8 +49,9 @@ class OrderHistoryActivity : AppCompatActivity() {
     private val mCalendarStart = initCalendarStart()
     private val mCalendarEnd = initCalendarEnd()
     private var db: AppDatabase? = null
-    private val ordersToPrint : ArrayList<CartDao.CartAndClient> = ArrayList()
-    private var cartsAndClients : List<CartDao.CartAndClient> = ArrayList()
+    private val ordersToPrint: ArrayList<CartDao.CartAndClient> = ArrayList()
+    private var cartsAndClients: List<CartDao.CartAndClient> = ArrayList()
+    private var check: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,9 +62,11 @@ class OrderHistoryActivity : AppCompatActivity() {
         bindAdapters()
         setDataSources()
         setListeners()
+
+
     }
 
-    fun checkPermissions(){
+    fun checkPermissions() {
         when {
             ContextCompat.checkSelfPermission(
                 this,
@@ -71,13 +74,17 @@ class OrderHistoryActivity : AppCompatActivity() {
             ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED-> {
+            ) == PackageManager.PERMISSION_GRANTED -> {
 
                 GlobalScope.launch {
-                    if (ordersToPrint.size > 0)
-                        generateExcel(ordersToPrint)
-                    else
-                        generateExcel(cartsAndClients)
+                    if (ordersToPrint.size > 0) {
+                        generateExcel(this@OrderHistoryActivity)
+                    } else
+                        Toast.makeText(
+                            this@OrderHistoryActivity,
+                            "Seleccione elementos",
+                            Toast.LENGTH_LONG
+                        ).show()
                 }
             }
             else -> {
@@ -197,102 +204,160 @@ class OrderHistoryActivity : AppCompatActivity() {
 
 //    private var filePath: File? = null
 
-    private fun generateExcel(cartsAndClients : List<CartDao.CartAndClient>) {
+    private fun sharedExcel(
+        cartsAndClients: List<CartDao.CartAndClient>,
+        db: AppDatabase
+    ): Deferred<HSSFWorkbook> {
 
-        val nameFile = "/Reporte-"+SimpleDateFormat("dd-MM-yy-hh:mm").format(Date())+".xls"
-        val filePath : File = File(Environment.getExternalStorageDirectory().toString() + nameFile )
+        return GlobalScope.async {
 
-        val workbook = HSSFWorkbook()
+            val workbook = HSSFWorkbook()
 
-        var cell: Cell
-
-
-        val cellStyle = workbook.createCellStyle()
-        cellStyle.fillForegroundColor = HSSFColor.AQUA.index
-        cellStyle.fillPattern = HSSFCellStyle.SOLID_FOREGROUND
-        cellStyle.alignment = CellStyle.ALIGN_CENTER
-
-        val sheet = workbook.createSheet("Registro de ventas")
+            var cell: Cell
 
 
-        var row = sheet.createRow(0)
+            val cellStyle = workbook.createCellStyle()
+            cellStyle.fillForegroundColor = HSSFColor.AQUA.index
+            cellStyle.fillPattern = HSSFCellStyle.SOLID_FOREGROUND
+            cellStyle.alignment = CellStyle.ALIGN_CENTER
 
-        cell = row.createCell(0)
-        cell.setCellValue("Folio de la venta")
-
-        cell = row.createCell(1)
-        cell.setCellValue("Fecha de creación")
-
-        cell = row.createCell(2)
-        cell.setCellValue("Cliente")
+            val sheet = workbook.createSheet("Registro de ventas")
 
 
-        cell = row.createCell(3)
-        cell.setCellValue("Total")
-
-        val dateFormat = SimpleDateFormat("dd/MM/yy hh:mm aa")
-
-        var count = 1
-        for (item in cartsAndClients) {
-
-            var row = sheet.createRow(count)
-            count++
+            var row = sheet.createRow(0)
 
             cell = row.createCell(0)
-            cell.setCellValue(item.cart?.folio.toString())
-//            cell.cellStyle = cellStyle
+            cell.setCellValue("Folio de la venta")
 
             cell = row.createCell(1)
-            cell.setCellValue(dateFormat.format(item.cart.dateCreated))
-//            cell.cellStyle = cellStyle
+            cell.setCellValue("Fecha de creación")
 
-            if (item.client != null){
-                cell = row.createCell(2)
-                cell.setCellValue(item.client.name)
-            }else{
-                cell = row.createCell(2)
-                cell.setCellValue("Sin Cliente")
-            }
+            cell = row.createCell(2)
+            cell.setCellValue("Cliente")
+
 
             cell = row.createCell(3)
-            cell.setCellValue(Formatter.intInHundredthsToString(item.cart.totalPriceInCents))
+            cell.setCellValue("Total")
+
+            val dateFormat = SimpleDateFormat("dd/MM/yy hh:mm aa")
+
+            var count = 1
+            for (item in cartsAndClients) {
+
+                var row = sheet.createRow(count)
+                count++
+
+                cell = row.createCell(0)
+                cell.setCellValue(item.cart?.folio.toString())
+//            cell.cellStyle = cellStyle
+
+                cell = row.createCell(1)
+                cell.setCellValue(dateFormat.format(item.cart.dateCreated))
+//            cell.cellStyle = cellStyle
+
+                if (item.client != null) {
+                    cell = row.createCell(2)
+                    cell.setCellValue(item.client.name)
+                } else {
+                    cell = row.createCell(2)
+                    cell.setCellValue("Sin Cliente")
+                }
+
+                cell = row.createCell(3)
+                cell.setCellValue(Formatter.intInHundredthsToString(item.cart.totalPriceInCents))
+
+                val cartItems : List<CartItemDao.CartItemAndProduct> =GlobalScope.async(Dispatchers.IO) {
+                    CartItemDL.getCartItemAndProductByCartId(
+                        db,
+                        item.cart.cart_id
+                    )
+                }.await()
+
+                row = sheet.createRow(count)
+                count++
+
+                cell = row.createCell(1)
+                cell.setCellValue("Cantidad")
+
+                cell = row.createCell(2)
+                cell.setCellValue("Nombre")
+
+                cell = row.createCell(3)
+                cell.setCellValue("Precio")
+
+                for (subItem in cartItems){
+
+                    var row = sheet.createRow(count)
+                    count++
+
+                    cell = row.createCell(1)
+                    cell.setCellValue(Formatter.intInHundredthsToString(subItem.cartItem.quantityInHundredths))
+
+                    cell = row.createCell(2)
+                    cell.setCellValue(subItem.product.name)
+
+                    cell = row.createCell(3)
+                    cell.setCellValue(Formatter.intInHundredthsToString(subItem.product.basePriceInCents))
+
+                }
+
+            }
+
+            workbook
         }
 
-        try {
-            if (!filePath!!.exists()) {
-                filePath!!.createNewFile()
-            }
 
+    }
 
-            val fileOutputStream = FileOutputStream(filePath)
-            workbook.write(fileOutputStream)
-            if (fileOutputStream != null) {
-                fileOutputStream.flush()
-                fileOutputStream.close()
-            }
+    private fun generateExcel(context: Context) {
 
-            val photoURI = FileProvider.getUriForFile(
-                this,
-                this.applicationContext.packageName + ".provider",
-                filePath
-            )
+        GlobalScope.launch {
 
-            val target = Intent(Intent.ACTION_SEND)
-            target.setDataAndType(photoURI, "text/plain")
-            target.putExtra(Intent.EXTRA_SUBJECT, "Reporte Ventas")
-            target .putExtra(Intent.EXTRA_STREAM, photoURI)
+            db = AppDatabase.getInstance(context)
+            val workbook = sharedExcel(ordersToPrint, db!!).await()
 
-            val intent = Intent.createChooser(target, "Open File")
+            val nameFile = "/Reporte-" + SimpleDateFormat("dd-MM-yy-hh:mm").format(Date()) + ".xls"
+            val filePath: File =
+                File(Environment.getExternalStorageDirectory().toString() + nameFile)
+
 
             try {
-                startActivity(intent)
-            } catch (e: ActivityNotFoundException) {
-                // Instruct the user to install a PDF reader here, or something
-            }
+                if (!filePath!!.exists()) {
+                    filePath!!.createNewFile()
+                }
 
-        } catch (e: Exception) {
-            e.printStackTrace()
+
+                val fileOutputStream = FileOutputStream(filePath)
+                workbook.write(fileOutputStream)
+                if (fileOutputStream != null) {
+                    fileOutputStream.flush()
+                    fileOutputStream.close()
+                }
+
+                val photoURI = FileProvider.getUriForFile(
+                    context,
+                    context.applicationContext.packageName + ".provider",
+                    filePath
+                )
+
+                val target = Intent(Intent.ACTION_SEND)
+                target.setDataAndType(photoURI, "text/plain")
+                target.putExtra(Intent.EXTRA_SUBJECT, "Reporte Ventas")
+                target.putExtra(Intent.EXTRA_STREAM, photoURI)
+
+                val intent = Intent.createChooser(target, "Open File")
+
+                try {
+                    startActivity(intent)
+                } catch (e: ActivityNotFoundException) {
+                    // Instruct the user to install a PDF reader here, or something
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
+
 
     }
 
@@ -314,6 +379,17 @@ class OrderHistoryActivity : AppCompatActivity() {
                 cartsAndClients =
                     CartDL.getCartsWithClient(db, selectedClient, mCalendarStart, mCalendarEnd)
 
+
+                if (cartsAndClients.isNotEmpty())
+                    runOnUiThread {
+                        order_history_tv_select_date_end.visibility = View.GONE
+                    }
+                else
+                    runOnUiThread {
+                        order_history_tv_select_date_end.visibility = View.VISIBLE
+                    }
+
+
                 val dateFormat = SimpleDateFormat("dd/MM/yy hh:mm aa")
                 val sharedPref = getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE)
 
@@ -330,6 +406,21 @@ class OrderHistoryActivity : AppCompatActivity() {
                         sharedPref.edit().putBoolean("firstActualization", true).commit()
                     }
                 }
+
+                val header = Grid3CellHeader(
+                    "", "Ventas", ""
+                ) {
+                    check = !check
+                    mOrdersListViewAdapter.setCheck(check)
+                    if (check)
+                        ordersToPrint.addAll(cartsAndClients)
+                    else
+                        ordersToPrint.clear()
+                }
+
+                header.hideField1 = true
+                header.hideField3 = true
+                data.add(header)
 
                 for (cartAndClient in cartsAndClients) {
                     val row = Grid3CellContent(
@@ -348,8 +439,10 @@ class OrderHistoryActivity : AppCompatActivity() {
                             startActivity(orderDetailIntent)
                         },
                         {
-
                             ordersToPrint.add(cartAndClient)
+                        }, {
+                            ordersToPrint.remove(cartAndClient)
+
                         }
                     )
                     row.hideField1 = true
@@ -358,7 +451,7 @@ class OrderHistoryActivity : AppCompatActivity() {
             }
             withContext(Dispatchers.Main) {
 
-                mOrdersListViewAdapter.setRowList(data)
+                mOrdersListViewAdapter.setRowList(data, true)
 
             }
         }

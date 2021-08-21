@@ -13,6 +13,8 @@ import mx.odelant.printorders.R
 class Grid3CellAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var mRowList: ArrayList<Grid3CellRow> = ArrayList()
+    private var bool: Boolean = false
+    private var check: Boolean = false
 
     override fun getItemCount(): Int {
         return mRowList.size
@@ -21,9 +23,9 @@ class Grid3CellAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val element = mRowList[position]
         when (holder) {
-            is Grid3CellContentViewHolder -> holder.bindView(element as Grid3CellContent)
+            is Grid3CellContentViewHolder -> holder.bindView(element as Grid3CellContent, bool, check)
             is Grid3CellTitleViewHolder -> holder.bindView(element as Grid3CellTitle)
-            is Grid3CellHeaderViewHolder -> holder.bindView(element as Grid3CellHeader)
+            is Grid3CellHeaderViewHolder -> holder.bindView(element as Grid3CellHeader, bool)
             else -> throw IllegalArgumentException() as Throwable
         }
     }
@@ -80,7 +82,7 @@ class Grid3CellAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class Grid3CellHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bindView(element: Grid3CellHeader) {
+        fun bindView(element: Grid3CellHeader, boolean: Boolean) {
 
             if (element.hideField1) {
                 itemView.grid_item_tv_field_1.visibility = View.GONE
@@ -98,12 +100,18 @@ class Grid3CellAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             itemView.grid_item_tv_field_1.setTypeface(null, Typeface.BOLD)
             itemView.grid_item_tv_field_2.setTypeface(null, Typeface.BOLD)
             itemView.grid_item_tv_field_3.setTypeface(null, Typeface.BOLD)
+
+            if (boolean)
+                itemView.grid_item_chBox_selectDownload.visibility = View.VISIBLE
+
+            itemView.grid_item_chBox_selectDownload.setOnClickListener(element.checkListener)
+
         }
     }
 
     class Grid3CellContentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bindView(element: Grid3CellContent) {
+        fun bindView(element: Grid3CellContent, boolean: Boolean, check:Boolean) {
 
             if (element.listener != null) {
                 itemView.isClickable = true
@@ -124,13 +132,36 @@ class Grid3CellAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             itemView.grid_item_tv_field_2.text = element.content2
             itemView.grid_item_tv_field_3.text = element.content3
 
-            itemView.grid_item_chBox_selectDownload.setOnClickListener(element.checkListener)
+            if (boolean)
+                itemView.grid_item_chBox_selectDownload.visibility = View.VISIBLE
+
+            itemView.grid_item_chBox_selectDownload.setOnCheckedChangeListener { compoundButton, b ->
+                if (b)
+                    itemView.grid_item_chBox_selectDownload.setOnClickListener(element.checkListener)
+                else
+                    itemView.grid_item_chBox_selectDownload.setOnClickListener(element.checkListenerRemove)
+
+            }
+
+            itemView.grid_item_chBox_selectDownload.isChecked = check
         }
     }
 
     fun setRowList(list: ArrayList<Grid3CellRow>) {
         mRowList.clear()
         mRowList.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    fun setRowList(list: ArrayList<Grid3CellRow>, boolean: Boolean) {
+        bool = boolean
+        mRowList.clear()
+        mRowList.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    fun setCheck(boolean: Boolean) {
+        check = boolean
         notifyDataSetChanged()
     }
 }
@@ -152,11 +183,17 @@ class Grid3CellTitle(val title: String) : Grid3CellRow {
     }
 }
 
-class Grid3CellHeader(val label1: String, val label2: String, val label3: String) : Grid3CellRow {
+class Grid3CellHeader(
+    val label1: String,
+    val label2: String,
+    val label3: String,
+    val checkListener: View.OnClickListener?
+    ) : Grid3CellRow {
 
     var hideField1 = false
     var hideField2 = false
     var hideField3 = false
+
 
     override fun getType(): Int {
         return Grid3CellRow.TYPE_HEADER
@@ -173,7 +210,8 @@ class Grid3CellContent(
     val content2: String,
     val content3: String,
     val listener: View.OnClickListener?,
-    val checkListener: View.OnClickListener?
+    val checkListener: View.OnClickListener?,
+    val checkListenerRemove: View.OnClickListener?
     ) : Grid3CellRow {
 
     var hideField1 = false
@@ -182,7 +220,7 @@ class Grid3CellContent(
 
     companion object {
         fun empty(): Grid3CellContent {
-            return Grid3CellContent("", "", "", null, null)
+            return Grid3CellContent("", "", "", null, null, null)
         }
     }
 

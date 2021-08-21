@@ -98,7 +98,7 @@ class ClientDetailDialog {
         fun makeCreateClientDialog(
             context: Context,
             db: AppDatabase,
-            onSuccess: () -> Unit
+            onSuccess: (Client?) -> Unit
         ): AlertDialog {
             val builder = AlertDialog.Builder(context)
             val dialogLayout =
@@ -126,7 +126,9 @@ class ClientDetailDialog {
                 GlobalScope.launch {
                     val error = ClientDL.tryInsertClient(db, client)
                     if (error == ClientDL.ClientDLError.NONE) {
-                        onSuccess()
+
+                        val client : Client? = ClientDL.getByName(db, editTextName.text.toString())
+                        onSuccess(client)
                         dialog.dismiss()
                     } else {
                         Snackbar.make(

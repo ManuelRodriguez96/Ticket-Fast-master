@@ -1,5 +1,6 @@
 package mx.odelant.printorders.activity.client
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -46,6 +47,10 @@ class ClientDetailActivity : AppCompatActivity() {
         bindAdapters()
         setDataSources()
         setListeners()
+
+        val sharedPref = getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE)
+        if (!sharedPref.getBoolean("isSystemUser", true))
+            client_detail_btn_add_client_price.visibility = View.GONE
     }
 
     private fun setToolbar() {
@@ -134,7 +139,9 @@ class ClientDetailActivity : AppCompatActivity() {
         val db = AppDatabase.getInstance(applicationContext)
         val data: ArrayList<Grid3CellRow> = ArrayList()
 
-        val header = Grid3CellHeader("", "Producto (Precio base)", "Precio cliente")
+        val header = Grid3CellHeader("", "Producto (Precio base)", "Precio cliente"){
+
+        }
         header.hideField1 = true
         data.add(header)
 
@@ -161,7 +168,7 @@ class ClientDetailActivity : AppCompatActivity() {
                             clientPrice,
                             product
                         ) { GlobalScope.launch { updateClientPricesList(gridAdapter) } }
-                    }, null
+                    }, null , null
                 )
                 row.hideField1 = true
                 return row

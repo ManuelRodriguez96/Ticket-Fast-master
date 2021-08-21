@@ -99,14 +99,14 @@ class ClientActivity : AppCompatActivity() {
                         client.id
                     )
                     startActivity(clientDetailIntent)
-                }, null
+                }, null, null
             )
             row.hideField1 = true
             row.hideField3 = true
             row
         }
 
-        val header = Grid3CellHeader("", "Cliente", "")
+        val header = Grid3CellHeader("", "Cliente", "", null)
         header.hideField1 = true
         header.hideField3 = true
         data.add(header)

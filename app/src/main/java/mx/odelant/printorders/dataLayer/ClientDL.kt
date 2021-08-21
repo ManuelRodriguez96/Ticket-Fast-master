@@ -78,6 +78,12 @@ class ClientDL {
             }
         }
 
+        suspend fun getByName(db: AppDatabase, clientName: String): Client? {
+            return withContext(Dispatchers.IO) {
+                db.clientDao().getClient(clientName)
+            }
+        }
+
         suspend fun getAll(db: AppDatabase): List<Client> {
             return withContext(Dispatchers.IO) {
                 db.clientDao().getAllClients()

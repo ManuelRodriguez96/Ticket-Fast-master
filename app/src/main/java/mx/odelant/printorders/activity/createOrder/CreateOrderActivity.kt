@@ -64,8 +64,8 @@ class CreateOrderActivity : AppCompatActivity() {
         val rCreateClientButton = create_order_btn_create_client
         rCreateClientButton.setOnClickListener {
             val db = AppDatabase.getInstance(applicationContext)
-            ClientDetailDialog.makeCreateClientDialog(this, db) { /*selectedClient ->
-                updateSelectedClient(selectedClient)*/
+            ClientDetailDialog.makeCreateClientDialog(this, db) { selectedClient ->
+                updateSelectedClient(selectedClient)
             }
         }
 
@@ -141,7 +141,7 @@ class CreateOrderActivity : AppCompatActivity() {
                     mPendingCart = CartDL.getOrCreatePendingCart(db)
                 val pendingCart = mPendingCart
 
-                data.add(Grid3CellHeader("#", "Producto", "$"))
+                data.add(Grid3CellHeader("#", "Producto", "$"){})
 
                 val cartItemsAndProducts =
                     CartItemDL.getCartItemAndProductByCartId(db, pendingCart.cart_id)
@@ -167,7 +167,7 @@ class CreateOrderActivity : AppCompatActivity() {
                                     product,
                                     ::updateOrderItemsList
                                 )
-                            }, null
+                            }, null, null
                         )
                     )
                 }
@@ -191,7 +191,7 @@ class CreateOrderActivity : AppCompatActivity() {
                                     it.product,
                                     ::updateOrderItemsList
                                 )
-                            }, null
+                            }, null, null
                         )
                     }
                 )

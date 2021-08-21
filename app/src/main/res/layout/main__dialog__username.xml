@@ -8,9 +8,13 @@
     <EditText
         android:id="@+id/main_dialog_edittext_username"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="160dp"
+        android:maxLines="3"
+        android:singleLine="false"
+        android:gravity="center"
+        android:background="@drawable/redondo"
+        android:backgroundTint="@color/gris_fondo"
         android:hint="@string/nombre_del_negocio"
         android:importantForAutofill="no"
-        android:inputType="textCapWords"
-        android:maxLength="28" />
+        android:inputType="textMultiLine" />
 </LinearLayout>

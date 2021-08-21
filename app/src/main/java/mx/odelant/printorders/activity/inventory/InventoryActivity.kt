@@ -92,13 +92,15 @@ class InventoryActivity : AppCompatActivity() {
                         db,
                         product
                     ) { GlobalScope.launch { updateProductsList(gridAdapter) } }
-                }, null
+                }, null, null
             )
             row.hideField1 = true
             row
         }
 
-        val header = Grid3CellHeader("", "Producto", "#")
+        val header = Grid3CellHeader("", "Producto", "#"){
+
+        }
         header.hideField1 = true
         data.add(header)
 
