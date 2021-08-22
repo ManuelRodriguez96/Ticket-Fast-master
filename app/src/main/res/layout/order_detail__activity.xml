@@ -1,74 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/order_detail_main_view"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/order_detail_main_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
     <androidx.appcompat.widget.Toolbar
-            app:title="@string/orden_generada"
-            android:id="@+id/order_detail_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:layout_constraintTop_toTopOf="parent"
-    />
+        android:id="@+id/order_detail_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="@string/orden_generada" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:padding="20dp"
-            app:layout_constraintTop_toBottomOf="@+id/order_detail_toolbar"
-            app:layout_constraintBottom_toBottomOf="parent"
-    >
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:padding="20dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/order_detail_toolbar">
+
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toTopOf="parent"
-                android:id="@+id/order_detail_ll_static_top">
+            android:id="@+id/order_detail_ll_static_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent">
+
             <Button
-                    android:id="@+id/order_detail_btn_connect_printer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/conectar_impresora"
-                    android:textSize="16sp"
-                    android:background="@drawable/button_selector"
-                    android:textColor="@color/white"
-                    android:layout_margin="8dp"/>
+                android:id="@+id/order_detail_btn_connect_printer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@drawable/button_selector"
+                android:text="@string/conectar_impresora"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
             <TextView
-                    android:id="@+id/order_detail_tv_connection_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:text="@string/sin_conexion"
-                    android:textSize="18sp"/>
+                android:id="@+id/order_detail_tv_connection_status"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/sin_conexion"
+                android:textSize="18sp" />
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/order_detail_ll_static_top"
-            app:layout_constraintBottom_toTopOf="@id/order_detail_btn_finalize">
+            app:layout_constraintBottom_toTopOf="@id/order_detail_btn_finalize"
+            app:layout_constraintTop_toBottomOf="@id/order_detail_ll_static_top">
+
             <com.leerybit.escpos.widgets.TicketPreview
                 android:id="@+id/order_detail_ticket_preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </androidx.core.widget.NestedScrollView>
 
-        <Button android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_print_black_24dp"
-                android:drawableStart="@drawable/ic_print_black_24dp"
-                android:layout_margin="8dp"
-                android:layout_marginTop="20dp"
-                android:text="@string/imprimir"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:id="@+id/order_detail_btn_finalize"
-                android:background="@drawable/button_selector"
-                android:textColor="@color/white"/>
+        <Button
+            android:id="@+id/order_detail_btn_finalize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_selector"
+            android:drawableStart="@drawable/ic_print_black_24dp"
+            android:drawableLeft="@drawable/ic_print_black_24dp"
+            android:text="@string/imprimir"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

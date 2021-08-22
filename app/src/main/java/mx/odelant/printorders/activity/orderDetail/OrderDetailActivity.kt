@@ -227,12 +227,12 @@ class OrderDetailActivity : AppCompatActivity() {
                 .menuLine(
                     "Total:",
                     "$${
-                        SpannableString(total).setSpan(
+                        SpannableString(total)/*.setSpan(
                             StyleSpan(Typeface.BOLD),
                             0,
                             total.length,
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
+                        )*/
                     }"
                 )
                 .divider()
