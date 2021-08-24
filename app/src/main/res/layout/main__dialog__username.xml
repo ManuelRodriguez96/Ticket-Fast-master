@@ -9,7 +9,7 @@
         android:id="@+id/main_dialog_edittext_username"
         android:layout_width="match_parent"
         android:layout_height="160dp"
-        android:maxLines="3"
+        android:maxLines="5"
         android:singleLine="false"
         android:gravity="center"
         android:background="@drawable/redondo"

@@ -80,11 +80,14 @@ class OrderHistoryActivity : AppCompatActivity() {
                     if (ordersToPrint.size > 0) {
                         generateExcel(this@OrderHistoryActivity)
                     } else
-                        Toast.makeText(
-                            this@OrderHistoryActivity,
-                            "Seleccione elementos",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        runOnUiThread{
+                            Toast.makeText(
+                                this@OrderHistoryActivity,
+                                "Seleccione elementos",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
                 }
             }
             else -> {
@@ -225,6 +228,13 @@ class OrderHistoryActivity : AppCompatActivity() {
 
 
             var row = sheet.createRow(0)
+            cell = row.createCell(0)
+            cell.setCellValue("Ventas")
+
+            cell = row.createCell(4)
+            cell.setCellValue("Productos")
+
+            row = sheet.createRow(1)
 
             cell = row.createCell(0)
             cell.setCellValue("Folio de la venta")
@@ -235,13 +245,25 @@ class OrderHistoryActivity : AppCompatActivity() {
             cell = row.createCell(2)
             cell.setCellValue("Cliente")
 
-
             cell = row.createCell(3)
             cell.setCellValue("Total")
 
+            cell = row.createCell(4)
+            cell.setCellValue("Unidad")
+
+            cell = row.createCell(5)
+            cell.setCellValue("Concepto")
+
+            cell = row.createCell(6)
+            cell.setCellValue("Precio")
+
+            cell = row.createCell(7)
+            cell.setCellValue("Total x producto")
+
+
             val dateFormat = SimpleDateFormat("dd/MM/yy hh:mm aa")
 
-            var count = 1
+            var count = 2
             for (item in cartsAndClients) {
 
                 var row = sheet.createRow(count)
@@ -249,11 +271,9 @@ class OrderHistoryActivity : AppCompatActivity() {
 
                 cell = row.createCell(0)
                 cell.setCellValue(item.cart?.folio.toString())
-//            cell.cellStyle = cellStyle
 
                 cell = row.createCell(1)
                 cell.setCellValue(dateFormat.format(item.cart.dateCreated))
-//            cell.cellStyle = cellStyle
 
                 if (item.client != null) {
                     cell = row.createCell(2)
@@ -266,6 +286,7 @@ class OrderHistoryActivity : AppCompatActivity() {
                 cell = row.createCell(3)
                 cell.setCellValue(Formatter.intInHundredthsToString(item.cart.totalPriceInCents))
 
+
                 val cartItems : List<CartItemDao.CartItemAndProduct> =GlobalScope.async(Dispatchers.IO) {
                     CartItemDL.getCartItemAndProductByCartId(
                         db,
@@ -273,32 +294,23 @@ class OrderHistoryActivity : AppCompatActivity() {
                     )
                 }.await()
 
-                row = sheet.createRow(count)
-                count++
-
-                cell = row.createCell(1)
-                cell.setCellValue("Cantidad")
-
-                cell = row.createCell(2)
-                cell.setCellValue("Nombre")
-
-                cell = row.createCell(3)
-                cell.setCellValue("Precio")
 
                 for (subItem in cartItems){
 
                     var row = sheet.createRow(count)
                     count++
 
-                    cell = row.createCell(1)
+                    cell = row.createCell(4)
                     cell.setCellValue(Formatter.intInHundredthsToString(subItem.cartItem.quantityInHundredths))
 
-                    cell = row.createCell(2)
+                    cell = row.createCell(5)
                     cell.setCellValue(subItem.product.name)
 
-                    cell = row.createCell(3)
+                    cell = row.createCell(6)
                     cell.setCellValue(Formatter.intInHundredthsToString(subItem.product.basePriceInCents))
 
+                    cell = row.createCell(7)
+                    cell.setCellValue(Formatter.intInHundredthsToString((subItem.cartItem.unitPriceInCents * subItem.cartItem.quantityInHundredths + 50) / 100))
                 }
 
             }
