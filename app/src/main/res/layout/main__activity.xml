@@ -94,6 +94,7 @@
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:text=""
+                    android:maxLines="3"
                     android:textSize="18sp" />
 
                 <Button
