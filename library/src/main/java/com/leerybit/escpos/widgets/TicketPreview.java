@@ -3,10 +3,15 @@ package com.leerybit.escpos.widgets;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.leerybit.escpos.Ticket;
+
+import java.text.Normalizer;
 
 /**
  * Copyright 2015 LeeryBit
@@ -59,7 +64,16 @@ public class TicketPreview extends androidx.appcompat.widget.AppCompatTextView {
 
   public void setTicket(Ticket ticket) {
 //		TODO calculate text size for fit to width
-    setText(ticket.getTicketPreview());
+    setText(cleanString(ticket.getTicketPreview()));
+
   }
+
+  public static String cleanString(String texto) {
+    texto = Normalizer.normalize(texto, Normalizer.Form.NFD);
+    texto = texto.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+    return texto;
+  }
+
+
 
 }

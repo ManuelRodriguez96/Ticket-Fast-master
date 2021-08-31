@@ -109,15 +109,17 @@ class CreateOrderActivity : AppCompatActivity() {
     }
 
     private fun updateSelectedClient(selectedClient: Client?) {
-        mSelectedClient = selectedClient
-        create_order_tv_select_client.text = selectedClient?.name ?: "Ninguno"
-        val db = AppDatabase.getInstance(this)
-        GlobalScope.launch {
-            val updateCart = CartDL.getOrCreatePendingCart(db).copy(
-                clientId = selectedClient?.id
-            )
-            CartDL.update(db, updateCart)
-            mPendingCart = updateCart
+        runOnUiThread {
+            mSelectedClient = selectedClient
+            create_order_tv_select_client.text = selectedClient?.name ?: "Ninguno"
+            val db = AppDatabase.getInstance(this)
+            GlobalScope.launch {
+                val updateCart = CartDL.getOrCreatePendingCart(db).copy(
+                    clientId = selectedClient?.id
+                )
+                CartDL.update(db, updateCart)
+                mPendingCart = updateCart
+            }
         }
     }
 

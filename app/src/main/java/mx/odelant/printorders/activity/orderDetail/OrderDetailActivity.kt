@@ -163,7 +163,7 @@ class OrderDetailActivity : AppCompatActivity() {
                         ), ""
                     )
                 )
-                .text("Expedida: ${dateformat.format(cartAsync.await()!!.dateCreated)}")
+                .text("Fecha: ${dateformat.format(cartAsync.await()!!.dateCreated)}")
                 .dividerDouble()
                 .feedLine()
 
@@ -290,4 +290,5 @@ class OrderDetailActivity : AppCompatActivity() {
         onBackPressed()
         return true
     }
+
 }
