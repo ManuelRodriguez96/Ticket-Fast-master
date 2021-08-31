@@ -220,7 +220,7 @@ class OrderDetailActivity : AppCompatActivity() {
                 }
             }
 
-            val total = (cartAsync.await()?.totalPriceInCents ?: 0).toString()
+            val total = Formatter.intInHundredthsToString((cartAsync.await()?.totalPriceInCents ?: 0))
             ticketBuilder.feedLine()
                 .divider()
                 .feedLine()

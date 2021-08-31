@@ -125,17 +125,11 @@ class ClientDetailDialog {
 
                 GlobalScope.launch {
                     val error = ClientDL.tryInsertClient(db, client)
-                    if (error == ClientDL.ClientDLError.NONE) {
+                    if (error == ClientDL.ClientDLError.NONE || error == ClientDL.ClientDLError.ERROR_DUPLICATE_NAME ) {
 
                         val client : Client? = ClientDL.getByName(db, editTextName.text.toString())
                         onSuccess(client)
                         dialog.dismiss()
-                    } else {
-                        Snackbar.make(
-                            it,
-                            "Un cliente con ese nombre ya existe. Seleccionalo para editarlo.",
-                            Snackbar.LENGTH_LONG
-                        ).show()
                     }
                 }
             }
