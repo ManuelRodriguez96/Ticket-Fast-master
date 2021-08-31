@@ -17,6 +17,7 @@ import com.leerybit.escpos.bluetooth.BTService
 import kotlinx.android.synthetic.main.order_detail__activity.*
 import kotlinx.coroutines.*
 import mx.odelant.printorders.R
+import mx.odelant.printorders.activity.createOrder.CreateOrderActivity
 import mx.odelant.printorders.dataLayer.*
 import mx.odelant.printorders.entities.Cart
 import mx.odelant.printorders.utils.Formatter
@@ -131,7 +132,8 @@ class OrderDetailActivity : AppCompatActivity() {
             val username = sharedPref.getString(getString(R.string.username), "")
 
             if (!username.isNullOrBlank()) {
-                ticketBuilder.header(username)
+                ticketBuilder.center(username)
+                    .feedLine()
             }
 
             var date = Calendar.getInstance()
@@ -139,7 +141,7 @@ class OrderDetailActivity : AppCompatActivity() {
             var mont = date.get(Calendar.MONTH)
             var year = date.get(Calendar.YEAR)
             var client: CharSequence? = if (TextUtils.isEmpty(clientAsync.await()?.name)) {
-                ""
+                CreateOrderActivity.CLIENTE_PASO
             } else {
                 clientAsync.await()?.name
             }

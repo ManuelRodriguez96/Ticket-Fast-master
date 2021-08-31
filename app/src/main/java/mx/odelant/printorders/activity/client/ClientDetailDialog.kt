@@ -109,6 +109,7 @@ class ClientDetailDialog {
             builder.setView(dialogLayout)
 
             builder.setPositiveButton("OK", null)
+            builder.setNeutralButton("Temporal", null)
             builder.setNegativeButton("cancelar", null)
             builder.setCancelable(true)
             val dialog = builder.show()
@@ -132,6 +133,21 @@ class ClientDetailDialog {
                         dialog.dismiss()
                     }
                 }
+            }
+
+            val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+
+            neutralButton.setOnClickListener {
+
+                val client = Client(
+                    0,
+                    editTextName.text.toString(),
+                    false
+                )
+
+                onSuccess(client)
+                dialog.dismiss()
+
             }
 
             return dialog

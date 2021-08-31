@@ -30,6 +30,10 @@ class CreateOrderActivity : AppCompatActivity() {
     private var mSelectedClient: Client? = null
     private lateinit var mPendingCart: Cart
 
+    companion object {
+        var CLIENTE_PASO = ""
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(rCreateOrderActivity)
@@ -112,13 +116,18 @@ class CreateOrderActivity : AppCompatActivity() {
         runOnUiThread {
             mSelectedClient = selectedClient
             create_order_tv_select_client.text = selectedClient?.name ?: "Ninguno"
-            val db = AppDatabase.getInstance(this)
-            GlobalScope.launch {
-                val updateCart = CartDL.getOrCreatePendingCart(db).copy(
-                    clientId = selectedClient?.id
-                )
-                CartDL.update(db, updateCart)
-                mPendingCart = updateCart
+            if (selectedClient?.id == 0){
+                CLIENTE_PASO = selectedClient?.name
+
+            }else{
+                val db = AppDatabase.getInstance(this)
+                GlobalScope.launch {
+                    val updateCart = CartDL.getOrCreatePendingCart(db).copy(
+                        clientId = selectedClient?.id
+                    )
+                    CartDL.update(db, updateCart)
+                    mPendingCart = updateCart
+                }
             }
         }
     }
