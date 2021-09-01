@@ -25,6 +25,7 @@ import mx.odelant.printorders.activity.utils.adapter.Grid3CellRow
 import mx.odelant.printorders.dataLayer.AppDatabase
 import mx.odelant.printorders.dataLayer.CartDL
 import mx.odelant.printorders.dataLayer.CartItemDL
+import mx.odelant.printorders.dataLayer.CartReturnItemDL
 import mx.odelant.printorders.entities.CartDao
 import mx.odelant.printorders.entities.CartItemDao
 import mx.odelant.printorders.entities.Client
@@ -234,6 +235,9 @@ class OrderHistoryActivity : AppCompatActivity() {
             cell = row.createCell(4)
             cell.setCellValue("Productos")
 
+            cell = row.createCell(8)
+            cell.setCellValue("Devoluciones")
+
             row = sheet.createRow(1)
 
             cell = row.createCell(0)
@@ -259,6 +263,12 @@ class OrderHistoryActivity : AppCompatActivity() {
 
             cell = row.createCell(7)
             cell.setCellValue("Total x producto")
+
+            cell = row.createCell(8)
+            cell.setCellValue("Unidad")
+
+            cell = row.createCell(9)
+            cell.setCellValue("Concepto")
 
 
             val dateFormat = SimpleDateFormat("dd/MM/yy hh:mm aa")
@@ -311,6 +321,27 @@ class OrderHistoryActivity : AppCompatActivity() {
 
                     cell = row.createCell(7)
                     cell.setCellValue(Formatter.intInHundredthsToString((subItem.cartItem.unitPriceInCents * subItem.cartItem.quantityInHundredths + 50) / 100))
+                }
+
+                val cartReturnItemsAsync =
+                    GlobalScope.async(Dispatchers.IO) {
+                        CartReturnItemDL.getCartReturnItemAndProductByCartId(
+                            db,
+                            item.cart.cart_id
+                        )
+                    }.await()
+
+                for (subItem in cartReturnItemsAsync){
+
+                    var row = sheet.createRow(count)
+                    count++
+
+                    cell = row.createCell(8)
+                    cell.setCellValue(Formatter.intInHundredthsToString(subItem.cartReturnItem.quantityInHundredths))
+
+                    cell = row.createCell(9)
+                    cell.setCellValue(subItem.product.name)
+
                 }
 
             }
