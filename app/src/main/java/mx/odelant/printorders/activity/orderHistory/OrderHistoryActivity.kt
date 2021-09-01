@@ -359,7 +359,7 @@ class OrderHistoryActivity : AppCompatActivity() {
             db = AppDatabase.getInstance(context)
             val workbook = sharedExcel(ordersToPrint, db!!).await()
 
-            val nameFile = "/Reporte-" + SimpleDateFormat("dd-MM-yy-hh:mm").format(Date()) + ".xls"
+            val nameFile = "/Reporte" + SimpleDateFormat("ddMMyyhhmm").format(Date()) + ".xls"
             val filePath: File =
                 File(Environment.getExternalStorageDirectory().toString() + nameFile)
 
