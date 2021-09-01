@@ -64,15 +64,11 @@ public class TicketPreview extends androidx.appcompat.widget.AppCompatTextView {
 
   public void setTicket(Ticket ticket) {
 //		TODO calculate text size for fit to width
-    setText(cleanString(ticket.getTicketPreview()));
+    setText(ticket.getTicketPreview());
 
   }
 
-  public static String cleanString(String texto) {
-    texto = Normalizer.normalize(texto, Normalizer.Form.NFD);
-    texto = texto.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
-    return texto;
-  }
+
 
 
 

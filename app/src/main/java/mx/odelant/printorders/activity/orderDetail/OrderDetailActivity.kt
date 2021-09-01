@@ -132,7 +132,7 @@ class OrderDetailActivity : AppCompatActivity() {
             val username = sharedPref.getString(getString(R.string.username), "")
 
             if (!username.isNullOrBlank()) {
-                ticketBuilder.center(username)
+                ticketBuilder.center(cleanString(username))
                     .feedLine()
             }
 
@@ -157,13 +157,13 @@ class OrderDetailActivity : AppCompatActivity() {
                 .dividerDouble()
                 .header("Nota de expedicion")
                 .dividerDouble()
-                .text(
-                    "Cliente: " + REGEX_UNACCENT.replace(
-                        Normalizer.normalize(
-                            client,
-                            Normalizer.Form.NFD
-                        ), ""
-                    )
+                .text(cleanString("Cliente: " + REGEX_UNACCENT.replace(
+                    Normalizer.normalize(
+                        client,
+                        Normalizer.Form.NFD
+                    ), ""
+                ))
+
                 )
                 .text("Fecha: ${dateformat.format(cartAsync.await()!!.dateCreated)}")
                 .dividerDouble()
@@ -183,7 +183,7 @@ class OrderDetailActivity : AppCompatActivity() {
                                     5,
                                     ' '
                                 )
-                        } ${productName} ($${Formatter.intInHundredthsToString(it.cartItem.unitPriceInCents)})"
+                        } ${cleanString(productName)} ($${Formatter.intInHundredthsToString(it.cartItem.unitPriceInCents)})"
                     val productTotalString =
                         "$${Formatter.intInHundredthsToString((it.cartItem.unitPriceInCents * it.cartItem.quantityInHundredths + 50) / 100)}"
 
@@ -291,6 +291,13 @@ class OrderDetailActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    fun cleanString(texto: String): String? {
+        var texto = texto
+        texto = Normalizer.normalize(texto, Normalizer.Form.NFD)
+        texto = texto.replace("[\\p{InCombiningDiacriticalMarks}]".toRegex(), "")
+        return texto
     }
 
 }
