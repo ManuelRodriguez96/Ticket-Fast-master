@@ -7,11 +7,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     defaultConfig {
         applicationId "mx.odelant.printorders"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 14
         versionName "1.0.10"
         vectorDrawables.useSupportLibrary = true
@@ -59,4 +59,7 @@ dependencies {
 
     // MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
+
+    implementation "androidx.activity:activity:1.4.0"
+    implementation "androidx.fragment:fragment:1.4.1"
 }

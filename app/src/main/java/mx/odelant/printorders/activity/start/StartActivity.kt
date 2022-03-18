@@ -35,7 +35,7 @@ class StartActivity : AppCompatActivity() {
 
         continueTRegisterActivity()
 
-        /*if (startPresenter.checkRegistration()) {
+        if (startPresenter.checkRegistration()) {
             continueTRegisterActivity()
         } else {
             startView.registrationButton.setOnClickListener {
@@ -57,7 +57,7 @@ class StartActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-        }*/
+        }
     }
 
     private fun continueTRegisterActivity() {

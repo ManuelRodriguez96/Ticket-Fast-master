@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -43,7 +44,10 @@ import kotlin.collections.ArrayList
 
 
 class OrderHistoryActivity : AppCompatActivity() {
-
+    private val permissions_storage = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    )
     private val rOrderHistoryActivity = R.layout.order_history__activity
     private val mOrdersListViewAdapter = Grid3CellAdapter()
     private var mSelectedClient: Client? = null
@@ -53,6 +57,7 @@ class OrderHistoryActivity : AppCompatActivity() {
     private val ordersToPrint: ArrayList<CartDao.CartAndClient> = ArrayList()
     private var cartsAndClients: List<CartDao.CartAndClient> = ArrayList()
     private var check: Boolean = false
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +71,7 @@ class OrderHistoryActivity : AppCompatActivity() {
 
 
     }
-
+/*
     fun checkPermissions() {
         when {
             ContextCompat.checkSelfPermission(
@@ -77,19 +82,6 @@ class OrderHistoryActivity : AppCompatActivity() {
                 Manifest.permission.READ_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED -> {
 
-                GlobalScope.launch {
-                    if (ordersToPrint.size > 0) {
-                        generateExcel(this@OrderHistoryActivity)
-                    } else
-                        runOnUiThread{
-                            Toast.makeText(
-                                this@OrderHistoryActivity,
-                                "Seleccione elementos",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-
-                }
             }
             else -> {
                 ActivityCompat.requestPermissions(
@@ -101,8 +93,8 @@ class OrderHistoryActivity : AppCompatActivity() {
                 )
             }
         }
-    }
-
+    }*/
+/*
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -117,7 +109,7 @@ class OrderHistoryActivity : AppCompatActivity() {
         }
 
 
-    }
+    }*/
 
     private fun initCalendarStart(): Calendar {
         val calendar = Calendar.getInstance()
@@ -202,7 +194,7 @@ class OrderHistoryActivity : AppCompatActivity() {
 
         val downloadButtonOrders = order_history_imbtn_donwloadFile
         downloadButtonOrders.setOnClickListener {
-            checkPermissions()
+            getStorePermission.launch(permissions_storage)
         }
     }
 
@@ -361,7 +353,7 @@ class OrderHistoryActivity : AppCompatActivity() {
 
             val nameFile = "/Reporte" + SimpleDateFormat("ddMMyyhhmm").format(Date()) + ".xls"
             val filePath: File =
-                File(Environment.getExternalStorageDirectory().toString() + nameFile)
+                File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.absolutePath + nameFile)
 
 
             try {
@@ -496,6 +488,31 @@ class OrderHistoryActivity : AppCompatActivity() {
 
                 mOrdersListViewAdapter.setRowList(data, true)
 
+            }
+        }
+    }
+
+    private val getStorePermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        var flag = true
+        permissions.entries.forEach{if(!it.value) flag = false}
+        when{
+            flag -> {
+                GlobalScope.launch {
+                    if (ordersToPrint.size > 0) {
+                        generateExcel(this@OrderHistoryActivity)
+                    } else
+                        runOnUiThread{
+                            Toast.makeText(
+                                this@OrderHistoryActivity,
+                                "Seleccione elementos",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                }
+            }
+            else -> {
+                Toast.makeText(this,"Para el funcionamiento correcto de la aplicación se necesitan los permisos requeridos.", Toast.LENGTH_LONG).show()
             }
         }
     }
