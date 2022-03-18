@@ -12,15 +12,13 @@ android {
     defaultConfig {
         applicationId "mx.odelant.printorders"
         minSdkVersion 21
-<<<<<<< Updated upstream
+
         targetSdkVersion 31
-        versionCode 14
-        versionName "1.0.10"
-=======
-        targetSdkVersion 30
+
+
         versionCode 19
         versionName "2.0.0"
->>>>>>> Stashed changes
+
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
