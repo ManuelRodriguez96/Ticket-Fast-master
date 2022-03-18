@@ -3,7 +3,7 @@ package mx.odelant.printorders.activity.Login
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.Resources
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -12,19 +12,16 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.github.mikephil.charting.utils.Utils
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import mx.odelant.printorders.R
 import mx.odelant.printorders.activity.main.MainActivity
-import java.nio.charset.Charset
-import java.security.Key
-import java.util.*
-import javax.crypto.Cipher
-import javax.crypto.spec.SecretKeySpec
+
 
 class RegistUserActivity : AppCompatActivity( ) {
 
     private val rRegistActivity = R.layout.regist_user_activity
-    private val KEY = "1Hbfh667adfDEJ78";
+    //private val KEY = "1Hbfh667adfDEJ78";
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,8 +70,9 @@ class RegistUserActivity : AppCompatActivity( ) {
                 builder.apply {
                     setPositiveButton(R.string.positiveButton,
                         DialogInterface.OnClickListener { dialog, id ->
-                            val encrypPass = encrypt(registEt.text.toString())
-                            sharedPref.edit().putString("password", encrypPass).commit()
+                            //val encrypPass = encrypt(registEt.text.toString())
+                            //sharedPref.edit().putString("password", encrypPass).commit()
+                            savePassword(registEt.text.toString())
                             sharedPref.edit().putBoolean("isSystemUser", true).commit()
                             sharedPref.edit().putBoolean("connect",true).commit()
 
@@ -99,7 +97,7 @@ class RegistUserActivity : AppCompatActivity( ) {
             var pass=  registEt.text.toString()
             if(pass == "" || pass == null) {
                 Toast.makeText(this, "Escriba alguna contraseña", Toast.LENGTH_LONG).show()
-            } else if(pass == decrypt(passwordGlobal)) {
+            } else if(pass == getPasswordFromPref()/*decrypt(passwordGlobal)*/) {
                 sharedPref.edit().putBoolean("isSystemUser", true).apply()
                 sharedPref.edit().putBoolean("connect",true).commit()
                 continueToMainActivity()
@@ -124,7 +122,36 @@ class RegistUserActivity : AppCompatActivity( ) {
         this.finish()
     }
 
-    fun encrypt(value : String) : String
+    private fun generateKey()  : MasterKey{
+        return MasterKey.Builder(this, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+    }
+    private fun savePassword(value : String) {
+        val sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
+            this,
+            "secret_shared_prefs",
+            generateKey(),
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+        val editor = sharedPreferences.edit()
+        editor.putString("password",value).commit()
+
+    }
+
+    private fun getPasswordFromPref() : String {
+        val sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
+            this,
+            "secret_shared_prefs",
+            generateKey(),
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+
+        return sharedPreferences.getString("password","unknown") ?: "unknown"
+    }
+    /*fun encrypt(value : String) : String
     {
         val key = generateKey()
         val cipher = Cipher.getInstance("AES")
@@ -151,5 +178,5 @@ class RegistUserActivity : AppCompatActivity( ) {
     private fun generateKey() : Key {
         val key =  SecretKeySpec(KEY.toByteArray(),"AES")
         return key
-    }
+    }*/
 }
