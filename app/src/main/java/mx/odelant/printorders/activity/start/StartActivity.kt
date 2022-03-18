@@ -23,6 +23,7 @@ class StartActivity : AppCompatActivity() {
     private lateinit var textEmail: EditText
     private lateinit var sharedPref: SharedPreferences
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(rStartActivity)
@@ -33,7 +34,7 @@ class StartActivity : AppCompatActivity() {
 
         textEmail = findViewById(R.id.start_et_email)
 
-        continueTRegisterActivity()
+        //continueTRegisterActivity()
 
         if (startPresenter.checkRegistration()) {
             continueTRegisterActivity()
