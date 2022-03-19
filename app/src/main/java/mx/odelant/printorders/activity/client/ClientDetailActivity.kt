@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.client__activity__detail.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -20,11 +19,12 @@ import mx.odelant.printorders.dataLayer.AppDatabase
 import mx.odelant.printorders.dataLayer.ClientDL
 import mx.odelant.printorders.dataLayer.ClientPriceDL
 import mx.odelant.printorders.dataLayer.ProductDL
+import mx.odelant.printorders.databinding.ClientActivityDetailBinding
 import mx.odelant.printorders.entities.ClientPrice
 import mx.odelant.printorders.utils.Formatter
 
 class ClientDetailActivity : AppCompatActivity() {
-
+    private lateinit var binding : ClientActivityDetailBinding
     private val rClientDetailActivity: Int = R.layout.client__activity__detail
     private val mClientPricesListViewAdapter = Grid3CellAdapter()
     private val mClientId by lazy {
@@ -37,7 +37,8 @@ class ClientDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(rClientDetailActivity)
+        binding = ClientActivityDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (mClientId == 0) {
             finish()
@@ -50,17 +51,17 @@ class ClientDetailActivity : AppCompatActivity() {
 
         val sharedPref = getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE)
         if (!sharedPref.getBoolean("isSystemUser", true))
-            client_detail_btn_add_client_price.visibility = View.GONE
+            binding.clientDetailBtnAddClientPrice.visibility = View.GONE
     }
 
     private fun setToolbar() {
-        val rToolbar = client_detail_toolbar
+        val rToolbar = binding.clientDetailToolbar
         setSupportActionBar(rToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun bindAdapters() {
-        val rClientPricesListView = client_detail_lv_client_prices
+        val rClientPricesListView = binding.clientDetailLvClientPrices
         rClientPricesListView.adapter = mClientPricesListViewAdapter
     }
 
@@ -73,7 +74,7 @@ class ClientDetailActivity : AppCompatActivity() {
 
     private fun setListeners() {
 
-        val rFilterClientPricesEditText = client_detail_et_filter_client_prices
+        val rFilterClientPricesEditText = binding.clientDetailEtFilterClientPrices
         rFilterClientPricesEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 GlobalScope.launch {
@@ -86,9 +87,9 @@ class ClientDetailActivity : AppCompatActivity() {
         })
 
         val db = AppDatabase.getInstance(applicationContext)
-        val rAddClientPriceButton = client_detail_btn_add_client_price
+        val rAddClientPriceButton = binding.clientDetailBtnAddClientPrice
 
-        val rEditClientNameButton = client_detail_btn_edit_client_name
+        val rEditClientNameButton = binding.clientDetailBtnEditClientName
 
         val context = this
 
@@ -111,7 +112,7 @@ class ClientDetailActivity : AppCompatActivity() {
                     }
                 }
 
-                client_detail_toolbar.title = "Precios para ${client.name}"
+                binding.clientDetailToolbar.title = "Precios para ${client.name}"
             } else {
                 rAddClientPriceButton.isEnabled = false
             }
@@ -120,7 +121,7 @@ class ClientDetailActivity : AppCompatActivity() {
 
     private suspend fun handleClientEdit() {
         val db = AppDatabase.getInstance(applicationContext)
-        val rClientNameTextView = client_detail_tv_client_name
+        val rClientNameTextView = binding.clientDetailTvClientName
 
         val client = ClientDL.getById(db, mClientId)
 
@@ -145,7 +146,7 @@ class ClientDetailActivity : AppCompatActivity() {
         header.hideField1 = true
         data.add(header)
 
-        val rFilterClientPricesEditText = client_detail_et_filter_client_prices
+        val rFilterClientPricesEditText = binding.clientDetailEtFilterClientPrices
         val searchString = rFilterClientPricesEditText.text.toString()
 
         val context = this

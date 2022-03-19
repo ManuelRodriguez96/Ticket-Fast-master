@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.client__activity.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,16 +17,18 @@ import mx.odelant.printorders.activity.utils.adapter.Grid3CellHeader
 import mx.odelant.printorders.activity.utils.adapter.Grid3CellRow
 import mx.odelant.printorders.dataLayer.AppDatabase
 import mx.odelant.printorders.dataLayer.ClientDL
+import mx.odelant.printorders.databinding.ClientActivityBinding
 import mx.odelant.printorders.entities.Client
 
 class ClientActivity : AppCompatActivity() {
-
+    private lateinit var binding : ClientActivityBinding
     private val rClientActivity = R.layout.client__activity
     private val mClientsListViewAdapter = Grid3CellAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(rClientActivity)
+        binding = ClientActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setToolbar()
         bindAdapters()
@@ -42,13 +43,13 @@ class ClientActivity : AppCompatActivity() {
     }
 
     private fun setToolbar() {
-        val rToolbar = client_toolbar
+        val rToolbar = binding.clientToolbar
         setSupportActionBar(rToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun bindAdapters() {
-        val rClientsListView = client_lv_clients
+        val rClientsListView = binding.clientLvClients
         rClientsListView.adapter = mClientsListViewAdapter
     }
 
@@ -60,7 +61,7 @@ class ClientActivity : AppCompatActivity() {
 
     private fun setListeners() {
 
-        val rFilterClientsEditText = client_et_filter_clients
+        val rFilterClientsEditText = binding.clientEtFilterClients
         rFilterClientsEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 GlobalScope.launch {
@@ -72,7 +73,7 @@ class ClientActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
 
-        val rAddClientButton = client_btn_add_client
+        val rAddClientButton = binding.clientBtnAddClient
         rAddClientButton.setOnClickListener {
             val db = AppDatabase.getInstance(applicationContext)
             ClientDetailDialog.makeCreateClientDialog(this, db) {
@@ -111,7 +112,7 @@ class ClientActivity : AppCompatActivity() {
         header.hideField3 = true
         data.add(header)
 
-        val rFilterClientsEditText = client_et_filter_clients
+        val rFilterClientsEditText = binding.clientEtFilterClients
         val searchString = rFilterClientsEditText.text.toString()
 
         withContext(Dispatchers.IO) {

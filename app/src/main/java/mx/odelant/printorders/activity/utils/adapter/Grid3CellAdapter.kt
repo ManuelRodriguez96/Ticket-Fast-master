@@ -1,14 +1,12 @@
 package mx.odelant.printorders.activity.utils.adapter
 
 import android.graphics.Typeface
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.utils__adapter__grid_3_cell_row.view.*
 import mx.odelant.printorders.R
+import mx.odelant.printorders.databinding.UtilsAdapterGrid3CellRowBinding
 
 class Grid3CellAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -35,31 +33,19 @@ class Grid3CellAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             Grid3CellRow.TYPE_CONTENT -> {
                 val layout = R.layout.utils__adapter__grid_3_cell_row
                 return Grid3CellContentViewHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        layout,
-                        parent,
-                        false
-                    )
+                    UtilsAdapterGrid3CellRowBinding.inflate(LayoutInflater.from(parent.context),parent,false)
                 )
             }
             Grid3CellRow.TYPE_HEADER -> {
                 val layout = R.layout.utils__adapter__grid_3_cell_row
                 return Grid3CellHeaderViewHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        layout,
-                        parent,
-                        false
-                    )
+                    UtilsAdapterGrid3CellRowBinding.inflate(LayoutInflater.from(parent.context),parent,false)
                 )
             }
             Grid3CellRow.TYPE_TITLE -> {
                 val layout = R.layout.utils__adapter__grid_3_cell_row
                 return Grid3CellTitleViewHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        layout,
-                        parent,
-                        false
-                    )
+                    UtilsAdapterGrid3CellRowBinding.inflate(LayoutInflater.from(parent.context),parent,false)
                 )
             }
             else -> throw IllegalArgumentException()
@@ -70,46 +56,46 @@ class Grid3CellAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return mRowList[position].getType()
     }
 
-    class Grid3CellTitleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class Grid3CellTitleViewHolder(val binding : UtilsAdapterGrid3CellRowBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bindView(element: Grid3CellTitle) {
-            itemView.grid_item_tv_field_2.text = element.title
-            itemView.grid_item_tv_field_2.setTypeface(null, Typeface.BOLD)
-            itemView.grid_item_tv_field_1.visibility = View.GONE
-            itemView.grid_item_tv_field_3.visibility = View.GONE
+            binding.gridItemTvField2.text = element.title
+            binding.gridItemTvField2.setTypeface(null, Typeface.BOLD)
+            binding.gridItemTvField1.visibility = View.GONE
+            binding.gridItemTvField3.visibility = View.GONE
         }
     }
 
-    class Grid3CellHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class Grid3CellHeaderViewHolder(val binding: UtilsAdapterGrid3CellRowBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bindView(element: Grid3CellHeader, boolean: Boolean) {
 
             if (element.hideField1) {
-                itemView.grid_item_tv_field_1.visibility = View.GONE
+                binding.gridItemTvField1.visibility = View.GONE
             }
             if (element.hideField2) {
-                itemView.grid_item_tv_field_2.visibility = View.GONE
+                binding.gridItemTvField2.visibility = View.GONE
             }
             if (element.hideField3) {
-                itemView.grid_item_tv_field_3.visibility = View.GONE
+                binding.gridItemTvField3.visibility = View.GONE
             }
 
-            itemView.grid_item_tv_field_1.text = element.label1
-            itemView.grid_item_tv_field_2.text = element.label2
-            itemView.grid_item_tv_field_3.text = element.label3
-            itemView.grid_item_tv_field_1.setTypeface(null, Typeface.BOLD)
-            itemView.grid_item_tv_field_2.setTypeface(null, Typeface.BOLD)
-            itemView.grid_item_tv_field_3.setTypeface(null, Typeface.BOLD)
+            binding.gridItemTvField1.text = element.label1
+            binding.gridItemTvField2.text = element.label2
+            binding.gridItemTvField3.text = element.label3
+            binding.gridItemTvField1.setTypeface(null, Typeface.BOLD)
+            binding.gridItemTvField2.setTypeface(null, Typeface.BOLD)
+            binding.gridItemTvField3.setTypeface(null, Typeface.BOLD)
 
             if (boolean)
-                itemView.grid_item_chBox_selectDownload.visibility = View.VISIBLE
+                binding.gridItemChBoxSelectDownload.visibility = View.VISIBLE
 
-            itemView.grid_item_chBox_selectDownload.setOnClickListener(element.checkListener)
+            binding.gridItemChBoxSelectDownload.setOnClickListener(element.checkListener)
 
         }
     }
 
-    class Grid3CellContentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class Grid3CellContentViewHolder(val binding: UtilsAdapterGrid3CellRowBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bindView(element: Grid3CellContent, boolean: Boolean, check:Boolean) {
 
@@ -119,31 +105,31 @@ class Grid3CellAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             if (element.hideField1) {
-                itemView.grid_item_tv_field_1.visibility = View.GONE
+                binding.gridItemTvField1.visibility = View.GONE
             }
             if (element.hideField2) {
-                itemView.grid_item_tv_field_2.visibility = View.GONE
+                binding.gridItemTvField2.visibility = View.GONE
             }
             if (element.hideField3) {
-                itemView.grid_item_tv_field_3.visibility = View.GONE
+                binding.gridItemTvField3.visibility = View.GONE
             }
 
-            itemView.grid_item_tv_field_1.text = element.content1
-            itemView.grid_item_tv_field_2.text = element.content2
-            itemView.grid_item_tv_field_3.text = element.content3
+            binding.gridItemTvField1.text = element.content1
+            binding.gridItemTvField2.text = element.content2
+            binding.gridItemTvField3.text = element.content3
 
             if (boolean)
-                itemView.grid_item_chBox_selectDownload.visibility = View.VISIBLE
+                binding.gridItemChBoxSelectDownload.visibility = View.VISIBLE
 
-            itemView.grid_item_chBox_selectDownload.setOnCheckedChangeListener { compoundButton, b ->
+            binding.gridItemChBoxSelectDownload.setOnCheckedChangeListener { compoundButton, b ->
                 if (b)
-                    itemView.grid_item_chBox_selectDownload.setOnClickListener(element.checkListener)
+                    binding.gridItemChBoxSelectDownload.setOnClickListener(element.checkListener)
                 else
-                    itemView.grid_item_chBox_selectDownload.setOnClickListener(element.checkListenerRemove)
+                    binding.gridItemChBoxSelectDownload.setOnClickListener(element.checkListenerRemove)
 
             }
 
-            itemView.grid_item_chBox_selectDownload.isChecked = check
+            binding.gridItemChBoxSelectDownload.isChecked = check
         }
     }
 

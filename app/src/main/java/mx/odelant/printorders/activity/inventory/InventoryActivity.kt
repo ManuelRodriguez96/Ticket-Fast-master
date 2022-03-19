@@ -5,7 +5,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.inventory__activity.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -17,17 +16,19 @@ import mx.odelant.printorders.activity.utils.adapter.Grid3CellHeader
 import mx.odelant.printorders.activity.utils.adapter.Grid3CellRow
 import mx.odelant.printorders.dataLayer.AppDatabase
 import mx.odelant.printorders.dataLayer.ProductDL
+import mx.odelant.printorders.databinding.InventoryActivityBinding
 import mx.odelant.printorders.entities.Product
 import mx.odelant.printorders.utils.Formatter
 
 class InventoryActivity : AppCompatActivity() {
-
+    private lateinit var binding : InventoryActivityBinding
     private val rInventoryActivity = R.layout.inventory__activity
     private val mProductsListViewAdapter = Grid3CellAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(rInventoryActivity)
+        binding = InventoryActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setToolbar()
         bindAdapters()
@@ -36,13 +37,13 @@ class InventoryActivity : AppCompatActivity() {
     }
 
     private fun setToolbar() {
-        val rToolbar = inventory_toolbar
+        val rToolbar = binding.inventoryToolbar
         setSupportActionBar(rToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun bindAdapters() {
-        val rProductsListView = inventory_lv_products
+        val rProductsListView = binding.inventoryLvProducts
         rProductsListView.adapter = mProductsListViewAdapter
     }
 
@@ -54,7 +55,7 @@ class InventoryActivity : AppCompatActivity() {
 
     private fun setListeners() {
 
-        val rFilterProductsEditText = inventory_et_filter_products
+        val rFilterProductsEditText = binding.inventoryEtFilterProducts
         rFilterProductsEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 GlobalScope.launch {
@@ -66,7 +67,7 @@ class InventoryActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
 
-        val rAddProductButton = inventory_btn_add_product
+        val rAddProductButton = binding.inventoryBtnAddProduct
         rAddProductButton.setOnClickListener {
             val db = AppDatabase.getInstance(applicationContext)
             ProductDetailDialog.makeCreateProductDialog(this, db) {
@@ -104,7 +105,7 @@ class InventoryActivity : AppCompatActivity() {
         header.hideField1 = true
         data.add(header)
 
-        val rFilterProductsEditText = inventory_et_filter_products
+        val rFilterProductsEditText = binding.inventoryEtFilterProducts
         val searchString = rFilterProductsEditText.text.toString()
 
         withContext(Dispatchers.IO) {

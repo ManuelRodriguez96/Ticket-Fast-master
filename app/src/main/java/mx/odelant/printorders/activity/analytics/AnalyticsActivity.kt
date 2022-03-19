@@ -12,7 +12,6 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.model.GradientColor
-import kotlinx.android.synthetic.main.analytics__activity.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -20,12 +19,14 @@ import kotlinx.coroutines.withContext
 import mx.odelant.printorders.R
 import mx.odelant.printorders.dataLayer.AnalyticsDL
 import mx.odelant.printorders.dataLayer.AppDatabase
+import mx.odelant.printorders.databinding.AnalyticsActivityBinding
 import mx.odelant.printorders.entities.Client
 import mx.odelant.printorders.entities.Product
 import mx.odelant.printorders.utils.Formatter
 import java.util.*
 
 class AnalyticsActivity : AppCompatActivity() {
+    private lateinit var binding : AnalyticsActivityBinding
     private var mSelectedDataType: AnalyticsDL.DataType = AnalyticsDL.DataType.Revenue
     private var mSelectedDateGranularity: AnalyticsDL.DateScope = AnalyticsDL.DateScope.Month
     private var mSelectedDate: Calendar = Calendar.getInstance()
@@ -36,7 +37,8 @@ class AnalyticsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(rAnalyticsActivity)
+        binding = AnalyticsActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setToolbar()
         bindAdapters()
@@ -76,17 +78,17 @@ class AnalyticsActivity : AppCompatActivity() {
                 )
 
             withContext(Dispatchers.Main) {
-                analytics_tv_date_label.text =
+                binding.analyticsTvDateLabel.text =
                     Formatter.toScopedDate(mSelectedDateGranularity, mSelectedDate)
-                analytics_tv_client_label.text = mSelectedClient?.name ?: "-"
-                analytics_tv_product_label.text = mSelectedProduct?.name ?: "-"
+                binding.analyticsTvClientLabel.text = mSelectedClient?.name ?: "-"
+                binding.analyticsTvProductLabel.text = mSelectedProduct?.name ?: "-"
 
                 val formattedRevenue = "$${Formatter.intInHundredthsToString(totals.totalRevenue)}"
-                analytics_tv_total_revenue.text = formattedRevenue
-                analytics_tv_total_quantity.text =
+                binding.analyticsTvTotalRevenue.text = formattedRevenue
+                binding.analyticsTvTotalQuantity.text =
                     Formatter.intInHundredthsToString(totals.totalAmount)
-                analytics_tv_total_orders.text = totals.totalOrders.toString()
-                analytics_tv_total_returns.text =
+                binding.analyticsTvTotalOrders.text = totals.totalOrders.toString()
+                binding.analyticsTvTotalReturns.text =
                     Formatter.intInHundredthsToString(returns)
             }
 
@@ -264,7 +266,7 @@ class AnalyticsActivity : AppCompatActivity() {
     }
 
     private fun setToolbar() {
-        val rToolbar = analytics_toolbar
+        val rToolbar = binding.analyticsToolbar
         setSupportActionBar(rToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
@@ -278,7 +280,7 @@ class AnalyticsActivity : AppCompatActivity() {
 
     private fun setSelectFilterButton() {
         val db = AppDatabase.getInstance(applicationContext)
-        analytics_btn_select_filters.setOnClickListener {
+        binding.analyticsBtnSelectFilters.setOnClickListener {
             AnalyticsDialog.makeSelectFiltersDialog(
                 mSelectedDate,
                 mSelectedDateGranularity,

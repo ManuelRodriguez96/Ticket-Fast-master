@@ -20,7 +20,6 @@ import java.io.IOException
 import java.net.URI
 
 class MainImageUtility(private val activity: Activity) {
-
     companion object {
         private const val IMAGE_PICK_CODE = 1000
         private const val PERMISSION_CODE = 1001

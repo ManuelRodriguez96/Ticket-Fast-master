@@ -4,18 +4,14 @@ import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.borax12.materialdaterangepicker.date.DatePickerDialog
-import kotlinx.android.synthetic.main.order_history__activity.*
 import kotlinx.coroutines.*
 import mx.odelant.printorders.R
 import mx.odelant.printorders.activity.orderDetail.OrderDetailActivity
@@ -27,6 +23,7 @@ import mx.odelant.printorders.dataLayer.AppDatabase
 import mx.odelant.printorders.dataLayer.CartDL
 import mx.odelant.printorders.dataLayer.CartItemDL
 import mx.odelant.printorders.dataLayer.CartReturnItemDL
+import mx.odelant.printorders.databinding.OrderHistoryActivityBinding
 import mx.odelant.printorders.entities.CartDao
 import mx.odelant.printorders.entities.CartItemDao
 import mx.odelant.printorders.entities.Client
@@ -40,10 +37,10 @@ import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class OrderHistoryActivity : AppCompatActivity() {
+    private lateinit var binding : OrderHistoryActivityBinding
     private val permissions_storage = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -63,7 +60,8 @@ class OrderHistoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         db = AppDatabase.getInstance(this)
-        setContentView(rOrderHistoryActivity)
+        binding = OrderHistoryActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setToolbar()
         bindAdapters()
         setDataSources()
@@ -129,13 +127,13 @@ class OrderHistoryActivity : AppCompatActivity() {
     }
 
     private fun setToolbar() {
-        val rToolbar = order_history_toolbar
+        val rToolbar = binding.orderHistoryToolbar
         setSupportActionBar(rToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun bindAdapters() {
-        val rOrdersListView = order_history_lv_orders
+        val rOrdersListView = binding.orderHistoryLvOrders
         rOrdersListView.adapter = mOrdersListViewAdapter
     }
 
@@ -152,9 +150,9 @@ class OrderHistoryActivity : AppCompatActivity() {
         val dayEnd = mCalendarEnd.get(Calendar.DAY_OF_MONTH)
 
         val dateSelectString = "$dayStart/$monthStart/$yearStart a $dayEnd/$monthEnd/$yearEnd"
-        order_history_tv_select_date.text = dateSelectString
+        binding.orderHistoryTvSelectDate.text = dateSelectString
 
-        val rSelectClientButton = order_history_btn_select_client
+        val rSelectClientButton = binding.orderHistoryBtnSelectClient
         rSelectClientButton.setOnClickListener {
             val db = AppDatabase.getInstance(applicationContext)
             OrderHistoryDialog.makeSelectClientDialog(this, db) { selectedClient ->
@@ -173,12 +171,12 @@ class OrderHistoryActivity : AppCompatActivity() {
 
                 val dpDateSelectString =
                     "$dpDayStart/$dpMonthStart/$dpYearStart a $dpDayEnd/$dpMonthEnd/$dpYearEnd"
-                order_history_tv_select_date.text = dpDateSelectString
+                binding.orderHistoryTvSelectDate.text = dpDateSelectString
 
                 updateOrdersList()
             }
 
-        val rSelectDateRangeButton = order_history_btn_select_date_range
+        val rSelectDateRangeButton = binding.orderHistoryBtnSelectDateRange
         rSelectDateRangeButton.setOnClickListener {
             val dpd = DatePickerDialog.newInstance(
                 datePickerListener,
@@ -192,7 +190,7 @@ class OrderHistoryActivity : AppCompatActivity() {
             dpd.show(fragmentManager, "Datepickerdialog")
         }
 
-        val downloadButtonOrders = order_history_imbtn_donwloadFile
+        val downloadButtonOrders = binding.orderHistoryImbtnDonwloadFile
         downloadButtonOrders.setOnClickListener {
             getStorePermission.launch(permissions_storage)
         }
@@ -398,7 +396,7 @@ class OrderHistoryActivity : AppCompatActivity() {
 
     private fun updateSelectedClient(selectedClient: Client?) {
         mSelectedClient = selectedClient
-        order_history_tv_select_client.text = selectedClient?.name ?: "Ninguno"
+        binding.orderHistoryTvSelectClient.text = selectedClient?.name ?: "Ninguno"
         updateOrdersList()
     }
 
@@ -417,11 +415,11 @@ class OrderHistoryActivity : AppCompatActivity() {
 
                 if (cartsAndClients.isNotEmpty())
                     runOnUiThread {
-                        order_history_tv_select_date_end.visibility = View.GONE
+                        binding.orderHistoryTvSelectDateEnd.visibility = View.GONE
                     }
                 else
                     runOnUiThread {
-                        order_history_tv_select_date_end.visibility = View.VISIBLE
+                        binding.orderHistoryTvSelectDateEnd.visibility = View.VISIBLE
                     }
 
 

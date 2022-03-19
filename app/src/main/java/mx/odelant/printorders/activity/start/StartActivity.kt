@@ -11,11 +11,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import mx.odelant.printorders.R
 import mx.odelant.printorders.activity.Login.RegistUserActivity
+import mx.odelant.printorders.databinding.StartActivityBinding
 import java.net.URLEncoder
 import android.content.Intent as Intent
 
 class StartActivity : AppCompatActivity() {
-
+    private lateinit var binding : StartActivityBinding
     private val rStartActivity = R.layout.start__activity
 
     private lateinit var startView: StartView
@@ -26,6 +27,7 @@ class StartActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = StartActivityBinding.inflate(layoutInflater)
         setContentView(rStartActivity)
 
         sharedPref = getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE)

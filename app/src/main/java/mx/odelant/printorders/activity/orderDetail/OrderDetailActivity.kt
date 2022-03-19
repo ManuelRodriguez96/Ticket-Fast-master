@@ -14,11 +14,11 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.leerybit.escpos.*
 import com.leerybit.escpos.bluetooth.BTService
-import kotlinx.android.synthetic.main.order_detail__activity.*
 import kotlinx.coroutines.*
 import mx.odelant.printorders.R
 import mx.odelant.printorders.activity.createOrder.CreateOrderActivity
 import mx.odelant.printorders.dataLayer.*
+import mx.odelant.printorders.databinding.OrderDetailActivityBinding
 import mx.odelant.printorders.entities.Cart
 import mx.odelant.printorders.utils.Formatter
 import java.io.BufferedReader
@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class OrderDetailActivity : AppCompatActivity() {
+    private lateinit var binding : OrderDetailActivityBinding
     private val mCartId by lazy {
         intent.getIntExtra(INTENT_CART_ID_KEY, 0)
     }
@@ -43,7 +44,8 @@ class OrderDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(rOrderDetailActivity)
+        binding = OrderDetailActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (mCartId == 0) {
             finish()
@@ -55,13 +57,13 @@ class OrderDetailActivity : AppCompatActivity() {
     }
 
     private fun setToolbar() {
-        val rToolbar = order_detail_toolbar
+        val rToolbar = binding.orderDetailToolbar
         setSupportActionBar(rToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun setOnClickListeners() {
-        order_detail_btn_connect_printer.setOnClickListener {
+        binding.orderDetailBtnConnectPrinter.setOnClickListener {
             if (!printer.isConnected) {
                 printer.connect()
             }
@@ -71,13 +73,13 @@ class OrderDetailActivity : AppCompatActivity() {
         GlobalScope.launch {
             val ticket = generateTicketAsync(db, mCartId, printer).await()
             runOnUiThread {
-                order_detail_ticket_preview.setTicket(ticket)
-                order_detail_btn_finalize.setOnClickListener {
+                binding.orderDetailTicketPreview.setTicket(ticket)
+                binding.orderDetailBtnFinalize.setOnClickListener {
                     try {
                         printer.send(ticket)
                     } catch (e: IOException) {
                         Snackbar.make(
-                            order_detail_main_view,
+                            binding.orderDetailMainView,
                             "Hubo un problema imprimiendo.",
                             Snackbar.LENGTH_LONG
                         ).show()
@@ -268,7 +270,7 @@ class OrderDetailActivity : AppCompatActivity() {
 
             override fun onFailure() {
                 Snackbar.make(
-                    order_detail_main_view,
+                    binding.orderDetailMainView,
                     "Hubo un problema conectandose a la impresora",
                     Snackbar.LENGTH_LONG
                 ).show()
@@ -284,8 +286,8 @@ class OrderDetailActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun setState(value: String, color: Int) {
-        order_detail_tv_connection_status.text = value
-        order_detail_tv_connection_status.setTextColor(ContextCompat.getColor(this, color))
+        binding.orderDetailTvConnectionStatus.text = value
+        binding.orderDetailTvConnectionStatus.setTextColor(ContextCompat.getColor(this, color))
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Binder
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -16,16 +17,19 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import mx.odelant.printorders.R
 import mx.odelant.printorders.activity.main.MainActivity
+import mx.odelant.printorders.databinding.InventoryActivityBinding
+import mx.odelant.printorders.databinding.RegistUserActivityBinding
 
 
 class RegistUserActivity : AppCompatActivity( ) {
-
+    private lateinit var binding: RegistUserActivityBinding
     private val rRegistActivity = R.layout.regist_user_activity
     //private val KEY = "1Hbfh667adfDEJ78";
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(rRegistActivity)
+        binding = RegistUserActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val sharedPref = getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE)
 

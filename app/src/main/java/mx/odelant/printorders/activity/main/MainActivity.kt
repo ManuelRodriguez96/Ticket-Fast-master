@@ -7,7 +7,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import kotlinx.android.synthetic.main.main__activity.*
 import mx.odelant.printorders.activity.analytics.AnalyticsActivity
 import mx.odelant.printorders.activity.client.ClientActivity
 import mx.odelant.printorders.activity.createOrder.CreateOrderActivity
@@ -21,13 +20,14 @@ import androidx.appcompat.app.AlertDialog
 import mx.odelant.printorders.R
 import mx.odelant.printorders.activity.Login.RegistUserActivity
 import mx.odelant.printorders.dataLayer.AppDatabase
+import mx.odelant.printorders.databinding.MainActivityBinding
 import java.nio.charset.Charset
 import java.security.Key
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var binding : MainActivityBinding
     private val rMainActivity = R.layout.main__activity
     private lateinit var sharedPref:SharedPreferences
 
@@ -36,23 +36,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(rMainActivity)
+        binding = MainActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         sharedPref = getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE)
         imageUtility = MainImageUtility(this)
 
         val systemUser = sharedPref.getBoolean("isSystemUser", false)
 
-        val rCreateOrderCardView = create_order_card_view
-        val rAnalyticsCardView = analytics_card_view
-        val rClientsAdminCardView = clients_admin_card_view
-        val rInventoryCardView = inventory_admin_card_view
-        val rOrderHistoryCardView = order_history_card_view
-        val rEditUsernameButton = edit_username_btn
-        val rProfilePictureImageView = profile_picture_iv
-        val rChangePass = changePass_card_view
-        val rLogOutBtn = logOut_card_view
-        val rReStarBtn = btn_restar_db
+        val rCreateOrderCardView = binding.createOrderCardView
+        val rAnalyticsCardView = binding.analyticsCardView
+        val rClientsAdminCardView = binding.clientsAdminCardView
+        val rInventoryCardView = binding.inventoryAdminCardView
+        val rOrderHistoryCardView = binding.orderHistoryCardView
+        val rEditUsernameButton = binding.editUsernameBtn
+        val rProfilePictureImageView = binding.profilePictureIv
+        val rChangePass = binding.changePassCardView
+        val rLogOutBtn = binding.logOutCardView
+        val rReStarBtn = binding.btnRestarDb
 
         if(systemUser == false){
             rAnalyticsCardView.visibility  = View.GONE
@@ -103,18 +104,18 @@ class MainActivity : AppCompatActivity() {
         val imageFile = imageUtility.getProfilePictureFile()
         if(imageFile.exists()) {
             val myBitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-            profile_picture_iv.setImageBitmap(myBitmap)
+            binding.profilePictureIv.setImageBitmap(myBitmap)
         }
     }
 
     private fun updateUsername() {
         val username = sharedPref.getString(getString(R.string.username), "")
         if(!username.isNullOrBlank()) {
-            edit_username_tv.text = username
-            edit_username_tv.setTextColor(ResourcesCompat.getColor(resources, R.color.range_light_gray, null))
+            binding.editUsernameTv.text = username
+            binding.editUsernameTv.setTextColor(ResourcesCompat.getColor(resources, R.color.range_light_gray, null))
         } else {
-            edit_username_tv.text = getString(R.string.sin_nombre)
-            edit_username_tv.setTextColor(ResourcesCompat.getColor(resources, R.color.red, null))
+            binding.editUsernameTv.text = getString(R.string.sin_nombre)
+            binding.editUsernameTv.setTextColor(ResourcesCompat.getColor(resources, R.color.red, null))
         }
     }
 
@@ -134,7 +135,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        imageUtility.onActivityResult(requestCode, resultCode, data, profile_picture_iv)
+        imageUtility.onActivityResult(requestCode, resultCode, data, binding.profilePictureIv)
     }
 
     private fun LogOutSessión () {

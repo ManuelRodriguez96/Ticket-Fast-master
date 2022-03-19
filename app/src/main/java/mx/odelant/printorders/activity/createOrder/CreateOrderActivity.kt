@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.create_order__activity.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -19,12 +18,13 @@ import mx.odelant.printorders.dataLayer.AppDatabase
 import mx.odelant.printorders.dataLayer.CartDL
 import mx.odelant.printorders.dataLayer.CartItemDL
 import mx.odelant.printorders.dataLayer.CartReturnItemDL
+import mx.odelant.printorders.databinding.CreateOrderActivityBinding
 import mx.odelant.printorders.entities.Cart
 import mx.odelant.printorders.entities.Client
 import mx.odelant.printorders.utils.Formatter
 
 class CreateOrderActivity : AppCompatActivity() {
-
+    private lateinit var binding : CreateOrderActivityBinding
     private val rCreateOrderActivity = R.layout.create_order__activity
     private val mOrderItemsListViewAdapter = Grid3CellAdapter()
     private var mSelectedClient: Client? = null
@@ -36,7 +36,8 @@ class CreateOrderActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(rCreateOrderActivity)
+        binding = CreateOrderActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val db = AppDatabase.getInstance(this)
 
@@ -47,16 +48,16 @@ class CreateOrderActivity : AppCompatActivity() {
     }
 
     private fun setToolbar() {
-        val rToolbar = create_order_toolbar
+        val rToolbar = binding.createOrderToolbar
         setSupportActionBar(rToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun bindAdapters() {
-        val rClientsListView = create_order_lv_products
+        val rClientsListView = binding.createOrderLvProducts
         rClientsListView.adapter = mOrderItemsListViewAdapter
 
-        create_order_btn_finalize.visibility = View.GONE
+        binding.createOrderBtnFinalize.visibility = View.GONE
     }
 
     private fun setDataSources() {
@@ -65,7 +66,7 @@ class CreateOrderActivity : AppCompatActivity() {
 
     private fun setListeners() {
 
-        val rCreateClientButton = create_order_btn_create_client
+        val rCreateClientButton = binding.createOrderBtnCreateClient
         rCreateClientButton.setOnClickListener {
             val db = AppDatabase.getInstance(applicationContext)
             ClientDetailDialog.makeCreateClientDialog(this, db) { selectedClient ->
@@ -73,7 +74,7 @@ class CreateOrderActivity : AppCompatActivity() {
             }
         }
 
-        val rSelectClientButton = create_order_btn_select_client
+        val rSelectClientButton = binding.createOrderBtnSelectClient
         rSelectClientButton.setOnClickListener {
             val db = AppDatabase.getInstance(applicationContext)
             CreateOrderDialog.makeSelectClientDialog(this, db) { selectedClient ->
@@ -81,7 +82,7 @@ class CreateOrderActivity : AppCompatActivity() {
             }
         }
 
-        val rAddProductButton = create_order_btn_add_product
+        val rAddProductButton = binding.createOrderBtnAddProduct
         rAddProductButton.setOnClickListener {
             val db = AppDatabase.getInstance(applicationContext)
             val pendingCart = mPendingCart
@@ -90,7 +91,7 @@ class CreateOrderActivity : AppCompatActivity() {
             }
         }
 
-        val rFinalizeOrderButton = create_order_btn_finalize
+        val rFinalizeOrderButton = binding.createOrderBtnFinalize
         rFinalizeOrderButton.setOnClickListener {
             val db = AppDatabase.getInstance(applicationContext)
             val context = this
@@ -115,7 +116,7 @@ class CreateOrderActivity : AppCompatActivity() {
     private fun updateSelectedClient(selectedClient: Client?) {
         runOnUiThread {
             mSelectedClient = selectedClient
-            create_order_tv_select_client.text = selectedClient?.name ?: "Ninguno"
+            binding.createOrderTvSelectClient.text = selectedClient?.name ?: "Ninguno"
             if (selectedClient?.id == 0){
                 CLIENTE_PASO = selectedClient?.name
 
@@ -219,9 +220,9 @@ class CreateOrderActivity : AppCompatActivity() {
 
             withContext(Dispatchers.Main) {
                 mOrderItemsListViewAdapter.setRowList(data)
-                create_order_tv_total.text =
+                binding.createOrderTvTotal.text =
                     "$${Formatter.intInHundredthsToString((totalOrderCostInTenThousandths + 50) / 100)}"
-                create_order_btn_finalize.visibility = if (isOrderEmpty) View.GONE else View.VISIBLE
+                binding.createOrderBtnFinalize.visibility = if (isOrderEmpty) View.GONE else View.VISIBLE
             }
         }
     }
