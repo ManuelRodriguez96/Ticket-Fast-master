@@ -17,6 +17,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import mx.odelant.printorders.R
 import mx.odelant.printorders.activity.Login.RegistUserActivity
 import mx.odelant.printorders.dataLayer.AppDatabase
@@ -166,7 +168,8 @@ class MainActivity : AppCompatActivity() {
             val password = editTextPass.text.toString()
             val sharedPreferencesEditor = sharedPref.edit()
             if(!password.isBlank()) {
-                sharedPreferencesEditor.putString("password",encrypt(password)).apply()
+                //sharedPreferencesEditor.putString("password",encrypt(password)).apply()
+                savePassword(password)
             } else {
                 val alertDialog: AlertDialog? = this?.let {
                     val builder = AlertDialog.Builder(it)
@@ -188,12 +191,41 @@ class MainActivity : AppCompatActivity() {
         return dialog
     }
 
-    private fun generateKey() : Key {
+    /*private fun generateKey() : Key {
         val key =  SecretKeySpec(KEY.toByteArray(),"AES")
         return key
+    }*/
+    private fun generateKey()  : MasterKey {
+        return MasterKey.Builder(this, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+    }
+    private fun savePassword(value : String) {
+        val sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
+            this,
+            "secret_shared_prefs",
+            generateKey(),
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+        val editor = sharedPreferences.edit()
+        editor.putString("password",value).commit()
+
     }
 
-    fun encrypt(value : String) : String
+    private fun getPasswordFromPref() : String {
+        val sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
+            this,
+            "secret_shared_prefs",
+            generateKey(),
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+
+        return sharedPreferences.getString("password","unknown") ?: "unknown"
+    }
+
+   /* fun encrypt(value : String) : String
     {
         val key = generateKey()
         val cipher = Cipher.getInstance("AES")
@@ -202,5 +234,5 @@ class MainActivity : AppCompatActivity() {
         val encryptedValue64 = android.util.Base64.encodeToString(encryptedByteValue, android.util.Base64.DEFAULT)
         return encryptedValue64
 
-    }
+    }*/
 }
